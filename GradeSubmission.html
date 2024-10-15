@@ -31,25 +31,15 @@
             margin-bottom: 20px;
         }
         ol {
-            counter-reset: step;
+            list-style: none; /* 移除默认序号 */
+            padding: 0;
         }
         li {
-            counter-increment: step;
             padding: 15px;
             background-color: #e7f0ea;
             margin-bottom: 10px;
             border-radius: 8px;
-            position: relative;
             font-size: 18px;
-        }
-        li::before {
-            content: counter(step) ". ";
-            font-weight: bold;
-            position: absolute;
-            left: -35px;
-            top: 15px;
-            font-size: 20px;
-            color: #4CAF50;
         }
         footer {
             text-align: center;
@@ -72,12 +62,12 @@
         <li><span class="step-title">教师工作手册</span>：填写教师工作手册，记录教学过程及相关信息。</li>
         <li><span class="step-title">装订好的卷子</span>：装订顺序如下：
             <ul>
-                <li>0. 封皮</li>
-                <li>1. 试卷分析 (B5)</li>
-                <li>2. 试卷答案 (B5)</li>
-                <li>3. 空白卷子 (A3)</li>
-                <li>4. 答题卡 (A3，学号从小到大排序)</li>
-                <li>5. 封底</li>
+                <li>封皮</li>
+                <li>试卷分析 (B5)</li>
+                <li>试卷答案 (B5)</li>
+                <li>空白卷子 (A3)</li>
+                <li>答题卡 (A3，学号从小到大排序)</li>
+                <li>封底</li>
             </ul>
         </li>
         <li><span class="step-title">提交成绩单</span>：准备一份完整的成绩单交到教务处，并签字确认。</li>
@@ -86,7 +76,7 @@
 </div>
 
 <footer>
-    版权所有 &copy; 2024 学校教务管理
+    版权所有 &copy; 2024 张老师
 </footer>
 
 </body>
