@@ -204,8 +204,8 @@
             for (let item of scheduleList) {
                 let row = item.innerText.split('(');
                 let date = row[0].trim(); // 日期
-                let weekDay = row[1].slice(0, -1); // 星期
-                let people = row[1].split('和').map(person => person.trim()); // 值班人员
+                let weekDay = row[1].split(')')[0].trim(); // 星期
+                let people = row[1].split(')')[1].split('和').map(person => person.trim()); // 值班人员
 
                 // 确保人员数量匹配
                 while (people.length < header.length - 2) {
