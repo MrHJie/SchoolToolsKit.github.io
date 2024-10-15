@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排班系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .schedule-result {
+            margin-top: 20px;
+        }
+
+        .schedule-result ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .schedule-result li {
+            background-color: #f9f9f9;
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>值班排班系统</h1>
+        <div class="form-group">
+            <label for="names">输入所有人员名单（每行一个）：</label>
+            <textarea id="names" placeholder="例如：&#10;张三&#10;李四&#10;王五"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="startPerson">选择第一个开始值班的人员：</label>
+            <select id="startPerson"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">选择开始排班日期：</label>
+            <input type="date" id="startDate">
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">选择结束排班日期：</label>
+            <input type="date" id="endDate">
+        </div>
+
+        <button onclick="generateSchedule()">生成排班表</button>
+
+        <div class="schedule-result" id="scheduleResult">
+            <h3>排班结果：</h3>
+            <ul id="resultList"></ul>
+        </div>
+    </div>
+
+    <script>
+        function populateStartPerson() {
+            let names = document.getElementById('names').value.trim().split('\n');
+            let startPersonSelect = document.getElementById('startPerson');
+            startPersonSelect.innerHTML = ''; // 清空之前的选项
+
+            names.forEach((name, index) => {
+                let option = document.createElement('option');
+                option.value = index;
+                option.textContent = name.trim();
+                startPersonSelect.appendChild(option);
+            });
+        }
+
+        document.getElementById('names').addEventListener('input', populateStartPerson);
+
+        function generateSchedule() {
+            let names = document.getElementById('names').value.trim().split('\n');
+            let startIndex = parseInt(document.getElementById('startPerson').value);
+            let startDate = new Date(document.getElementById('startDate').value);
+            let endDate = new Date(document.getElementById('endDate').value);
+            let resultList = document.getElementById('resultList');
+
+            resultList.innerHTML = ''; // 清空之前的结果
+
+            if (!startDate || !endDate || names.length === 0 || isNaN(startIndex)) {
+                alert('请填写完整信息！');
+                return;
+            }
+
+            let currentIndex = startIndex;
+            let currentDate = new Date(startDate);
+
+            while (currentDate <= endDate) {
+                let listItem = document.createElement('li');
+                listItem.textContent = currentDate.toISOString().split('T')[0] + ' - ' + names[currentIndex];
+                resultList.appendChild(listItem);
+
+                // 下一天
+                currentDate.setDate(currentDate.getDate() + 1);
+
+                // 轮换到下一个人
+                currentIndex = (currentIndex + 1) % names.length;
+            }
+        }
+    </script>
+
+</body>
+</html>
