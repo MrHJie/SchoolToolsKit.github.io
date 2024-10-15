@@ -153,14 +153,15 @@
 
             while (currentDate <= endDate) {
                 let listItem = document.createElement('li');
-                listItem.textContent = currentDate.toISOString().split('T')[0] + ' - ' + names[currentIndex];
+                let secondPersonIndex = (currentIndex + 1) % names.length;
+                listItem.textContent = currentDate.toISOString().split('T')[0] + ' - ' + names[currentIndex] + ' 和 ' + names[secondPersonIndex];
                 resultList.appendChild(listItem);
 
                 // 下一天
                 currentDate.setDate(currentDate.getDate() + 1);
 
-                // 轮换到下一个人
-                currentIndex = (currentIndex + 1) % names.length;
+                // 轮换到下两个值班人员
+                currentIndex = (currentIndex + 2) % names.length;
             }
         }
     </script>
