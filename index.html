@@ -37,23 +37,30 @@
             margin-bottom: 30px;
         }
         nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: block;
         }
         a {
+            display: block;
             text-decoration: none;
             color: #fff;
             background-color: rgba(255, 255, 255, 0.2);
             padding: 15px 30px;
-            margin: 10px;
+            margin: 10px 0;
             border-radius: 50px;
             font-size: 1.1em;
             transition: background-color 0.3s ease, transform 0.3s ease;
+            position: relative;
         }
         a:hover {
             background-color: rgba(255, 255, 255, 0.4);
             transform: translateY(-5px);
+        }
+        a::before {
+            content: attr(data-number) ". ";
+            position: absolute;
+            left: 20px;
+            font-size: 1.1em;
+            color: #fff;
         }
         @media (max-width: 768px) {
             h1 {
@@ -75,10 +82,10 @@
         <h1>Explore the Pages</h1>
         <p>Select a destination to visit:</p>
         <nav>
-            <a href="page1.html">Page 1</a>
-            <a href="page2.html">Page 2</a>
-            <a href="page3.html">Page 3</a>
-            <a href="page4.html">Page 4</a>
+            <a href="page1.html" data-number="1">Page 1</a>
+            <a href="page2.html" data-number="2">Page 2</a>
+            <a href="page3.html" data-number="3">Page 3</a>
+            <a href="page4.html" data-number="4">Page 4</a>
         </nav>
     </div>
 
