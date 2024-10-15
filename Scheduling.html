@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>排班系统</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,62 +12,56 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            min-height: 100vh;
-            box-sizing: border-box;
+            height: 100vh;
             margin: 0;
         }
 
         .container {
             background-color: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
             width: 100%;
         }
 
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
             font-weight: bold;
-            margin-bottom: 8px;
-            color: #555;
+            margin-bottom: 5px;
         }
 
-        textarea, select, input[type="date"], input[type="number"] {
+        input, textarea, select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 5px;
             font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
         }
 
-        textarea:focus, select:focus, input[type="date"]:focus, input[type="number"]:focus {
-            border-color: #4CAF50;
-            outline: none;
+        textarea {
+            resize: none;
+            height: 100px;
         }
 
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
+            margin-top: 10px;
             width: 100%;
         }
 
@@ -75,55 +70,20 @@
         }
 
         .schedule-result {
-            margin-top: 25px;
-        }
-
-        .schedule-result h3 {
-            color: #333;
-            margin-bottom: 15px;
-            text-align: center;
+            margin-top: 20px;
         }
 
         .schedule-result ul {
             list-style-type: none;
             padding: 0;
-            max-height: 400px;
-            overflow-y: auto;
         }
 
         .schedule-result li {
             background-color: #f9f9f9;
-            margin-bottom: 8px;
-            padding: 12px;
+            margin-bottom: 5px;
+            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .schedule-result li:nth-child(odd) {
-            background-color: #f1f1f1;
-        }
-
-        .date {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .persons {
-            color: #555;
-        }
-
-        @media (max-width: 600px) {
-            .schedule-result li {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .persons {
-                margin-top: 5px;
-            }
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -133,11 +93,7 @@
         <h1>值班排班系统</h1>
         <div class="form-group">
             <label for="names">输入所有人员名单（每行一个）：</label>
-            <textarea id="names" placeholder="例如：
-张三
-李四
-王五
-赵六"></textarea>
+            <textarea id="names" placeholder="例如：&#10;张三&#10;李四&#10;王五"></textarea>
         </div>
 
         <div class="form-group">
@@ -156,22 +112,23 @@
         </div>
 
         <div class="form-group">
-            <label for="numPerDay">每天值班人数：</label>
-            <input type="number" id="numPerDay" min="1" value="2">
+            <label for="numPeople">每天值班人数：</label>
+            <input type="number" id="numPeople" value="2" min="1">
         </div>
 
         <button onclick="generateSchedule()">生成排班表</button>
+        <button onclick="exportExcel()">导出排班表为Excel</button>
 
-        <div class="schedule-result" id="scheduleResult" style="display: none;">
+        <div class="schedule-result" id="scheduleResult">
             <h3>排班结果：</h3>
             <ul id="resultList"></ul>
         </div>
     </div>
 
     <script>
-        // 更新开始值班人员下拉菜单
+        // Populate the start person dropdown based on the names input
         function populateStartPerson() {
-            let names = getNames();
+            let names = document.getElementById('names').value.trim().split('\n');
             let startPersonSelect = document.getElementById('startPerson');
             startPersonSelect.innerHTML = ''; // 清空之前的选项
 
@@ -183,50 +140,21 @@
             });
         }
 
-        // 获取人员名单并去除空白行
-        function getNames() {
-            return document.getElementById('names').value.trim().split('\n').map(name => name.trim()).filter(name => name !== '');
-        }
-
         document.getElementById('names').addEventListener('input', populateStartPerson);
 
-        // 初始化开始值班人员下拉菜单
-        window.addEventListener('DOMContentLoaded', populateStartPerson);
-
-        // 生成排班表
+        // Generate the schedule based on the input values
         function generateSchedule() {
-            let names = getNames();
+            let names = document.getElementById('names').value.trim().split('\n');
             let startIndex = parseInt(document.getElementById('startPerson').value);
-            let startDateInput = document.getElementById('startDate').value;
-            let endDateInput = document.getElementById('endDate').value;
-            let numPerDay = parseInt(document.getElementById('numPerDay').value);
+            let startDate = new Date(document.getElementById('startDate').value);
+            let endDate = new Date(document.getElementById('endDate').value);
+            let numPeople = parseInt(document.getElementById('numPeople').value);
             let resultList = document.getElementById('resultList');
-            let scheduleResult = document.getElementById('scheduleResult');
 
             resultList.innerHTML = ''; // 清空之前的结果
-            scheduleResult.style.display = 'none'; // 隐藏结果区域
 
-            // 输入验证
-            if (!startDateInput || !endDateInput || names.length === 0 || isNaN(startIndex) || isNaN(numPerDay)) {
+            if (!startDate || !endDate || names.length === 0 || isNaN(startIndex)) {
                 alert('请填写完整信息！');
-                return;
-            }
-
-            if (numPerDay < 1) {
-                alert('每天值班人数至少为1！');
-                return;
-            }
-
-            if (numPerDay > names.length) {
-                alert('每天值班人数不能超过总人员数！');
-                return;
-            }
-
-            let startDate = new Date(startDateInput);
-            let endDate = new Date(endDateInput);
-
-            if (startDate > endDate) {
-                alert('开始日期不能晚于结束日期！');
                 return;
             }
 
@@ -235,36 +163,40 @@
 
             while (currentDate <= endDate) {
                 let listItem = document.createElement('li');
+                let dutyPeople = [];
 
-                // 获取当天值班人员
-                let todayPersons = [];
-                for (let i = 0; i < numPerDay; i++) {
-                    let personIndex = (currentIndex + i) % names.length;
-                    todayPersons.push(names[personIndex]);
+                // 选择指定数量的人值班
+                for (let i = 0; i < numPeople; i++) {
+                    dutyPeople.push(names[currentIndex]);
+                    currentIndex = (currentIndex + 1) % names.length;
                 }
 
-                // 创建日期和人员显示
-                let dateSpan = document.createElement('span');
-                dateSpan.className = 'date';
-                dateSpan.textContent = currentDate.toISOString().split('T')[0];
-
-                let personsSpan = document.createElement('span');
-                personsSpan.className = 'persons';
-                personsSpan.textContent = todayPersons.join('、 ');
-
-                listItem.appendChild(dateSpan);
-                listItem.appendChild(personsSpan);
+                listItem.textContent = currentDate.toISOString().split('T')[0] + ' - ' + dutyPeople.join(' 和 ');
                 resultList.appendChild(listItem);
 
                 // 下一天
                 currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
 
-                // 轮换到下 n 个值班人员
-                currentIndex = (currentIndex + numPerDay) % names.length;
+        // Export the schedule to Excel
+        function exportExcel() {
+            let scheduleList = document.getElementById('resultList').children;
+            let data = [];
+            let header = ["日期", "值班人员"];
+            data.push(header);
+
+            for (let item of scheduleList) {
+                let row = item.textContent.split(' - ');
+                data.push(row);
             }
 
-            // 显示结果区域
-            scheduleResult.style.display = 'block';
+            // 使用SheetJS导出Excel
+            let ws = XLSX.utils.aoa_to_sheet(data);
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "排班表");
+
+            XLSX.writeFile(wb, "排班表.xlsx");
         }
     </script>
 
