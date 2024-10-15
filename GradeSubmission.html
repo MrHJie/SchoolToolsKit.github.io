@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f0f8ff;
             margin: 0;
             padding: 0;
         }
@@ -16,51 +16,73 @@
             color: white;
             padding: 20px;
             text-align: center;
-            font-size: 24px;
+            font-size: 26px;
+            font-weight: bold;
         }
         .container {
-            width: 80%;
-            margin: 20px auto;
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
         h2 {
             color: #333;
             text-align: center;
+            font-size: 24px;
             margin-bottom: 20px;
+            text-transform: uppercase;
         }
         ol {
-            counter-reset: step;
+            counter-reset: step-counter;
+            list-style: none;
+            padding-left: 0;
         }
         li {
-            counter-increment: step;
-            padding: 15px;
-            background-color: #e7f0ea;
-            margin-bottom: 10px;
+            counter-increment: step-counter;
+            background-color: #f7f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
             border-radius: 8px;
             position: relative;
             font-size: 18px;
+            line-height: 1.6;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         }
         li::before {
-            content: counter(step) ". ";
-            font-weight: bold;
+            content: counter(step-counter);
             position: absolute;
-            left: -35px;
-            top: 15px;
-            font-size: 20px;
-            color: #4CAF50;
-        }
-        .step-title {
+            top: 50%;
+            left: -50px;
+            transform: translateY(-50%);
+            background-color: #4CAF50;
+            color: white;
+            font-size: 24px;
             font-weight: bold;
-            color: #4CAF50;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        li ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        li ul li {
+            list-style-type: disc;
+            margin-bottom: 8px;
         }
         footer {
             text-align: center;
-            padding: 10px;
+            padding: 20px;
             background-color: #f4f4f4;
-            margin-top: 20px;
+            margin-top: 30px;
             font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
@@ -73,19 +95,19 @@
 <div class="container">
     <h2>步骤指南</h2>
     <ol>
-        <li><span class="step-title">教师工作手册</span>：填写教师工作手册，记录教学过程及相关信息。</li>
-        <li><span class="step-title">装订好的卷子</span>：装订顺序如下：
+        <li>填写《教师工作手册》，记录教学过程及相关信息。</li>
+        <li>装订好的卷子，顺序如下：
             <ul>
-                <li>0. 封皮</li>
-                <li>1. 试卷分析 (B5)</li>
-                <li>2. 试卷答案 (B5)</li>
-                <li>3. 空白卷子 (A3)</li>
-                <li>4. 答题卡 (A3，学号从小到大排序)</li>
-                <li>5. 封底</li>
+                <li>封皮</li>
+                <li>试卷分析 (B5)</li>
+                <li>试卷答案 (B5)</li>
+                <li>空白卷子 (A3)</li>
+                <li>答题卡 (A3，学号从小到大排序)</li>
+                <li>封底</li>
             </ul>
         </li>
-        <li><span class="step-title">提交成绩单</span>：准备一份完整的成绩单交到教务处，并签字确认。</li>
-        <li><span class="step-title">教务科工作</span>：教务科填写教学工作量表，完成相关程序。</li>
+        <li>准备一份成绩单，提交至教务处并签字确认。</li>
+        <li>教务科填写《教学工作量表》，完成相关程序。</li>
     </ol>
 </div>
 
