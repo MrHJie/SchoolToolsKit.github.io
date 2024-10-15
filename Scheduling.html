@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f0f8ff; /* 更柔和的背景色 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,7 +20,7 @@
             background-color: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
             max-width: 800px;
             width: 100%;
         }
@@ -43,7 +43,7 @@
         input, textarea, select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc; /* 轻微的边框 */
             border-radius: 5px;
             font-size: 16px;
         }
@@ -54,7 +54,7 @@
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #007BFF; /* 更鲜艳的按钮色 */
             color: white;
             padding: 10px 20px;
             border: none;
@@ -63,10 +63,11 @@
             font-size: 16px;
             margin-top: 10px;
             width: 100%;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3; /* 悬停时的颜色变化 */
         }
 
         .schedule-result {
@@ -79,11 +80,22 @@
         }
 
         .schedule-result li {
-            background-color: #f9f9f9;
+            background-color: #e7f3fe; /* 更好的背景色 */
             margin-bottom: 5px;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 5px;
+            display: flex; /* 使用flex布局 */
+            justify-content: space-between; /* 水平分布 */
+        }
+
+        .day {
+            flex: 1; /* 左侧显示日期和星期 */
+            font-weight: bold;
+        }
+
+        .people {
+            flex: 2; /* 右侧显示值班人员 */
         }
     </style>
 </head>
@@ -171,7 +183,10 @@
                     currentIndex = (currentIndex + 1) % names.length;
                 }
 
-                listItem.textContent = currentDate.toISOString().split('T')[0] + ' - ' + dutyPeople.join(' 和 ');
+                // 获取星期几
+                let weekDay = currentDate.toLocaleString('zh-CN', { weekday: 'long' });
+
+                listItem.innerHTML = `<span class="day">${currentDate.toISOString().split('T')[0]} (${weekDay})</span><span class="people">${dutyPeople.join(' 和 ')}</span>`;
                 resultList.appendChild(listItem);
 
                 // 下一天
@@ -183,12 +198,21 @@
         function exportExcel() {
             let scheduleList = document.getElementById('resultList').children;
             let data = [];
-            let header = ["日期", "值班人员"];
+            let header = ["日期", "星期", ...Array.from({ length: parseInt(document.getElementById('numPeople').value) }, (_, i) => `值班人员${i + 1}`)];
             data.push(header);
 
             for (let item of scheduleList) {
-                let row = item.textContent.split(' - ');
-                data.push(row);
+                let row = item.innerText.split('(');
+                let date = row[0].trim(); // 日期
+                let weekDay = row[1].slice(0, -1); // 星期
+                let people = row[1].split('和').map(person => person.trim()); // 值班人员
+
+                // 确保人员数量匹配
+                while (people.length < header.length - 2) {
+                    people.push(""); // 填充空白
+                }
+
+                data.push([date, weekDay, ...people]);
             }
 
             // 使用SheetJS导出Excel
