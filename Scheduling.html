@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排班系统</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* 更柔和的背景色 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc; /* 轻微的边框 */
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        button {
+            background-color: #007BFF; /* 更鲜艳的按钮色 */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* 悬停时的颜色变化 */
+        }
+
+        .schedule-result {
+            margin-top: 20px;
+            max-height: 300px; /* 设置最大高度，根据需要调整 */
+            overflow-y: auto; /* 启用垂直滚动 */
+        }
+
+        .schedule-result ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .schedule-result li {
+            background-color: #e7f3fe; /* 更好的背景色 */
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: flex; /* 使用flex布局 */
+            justify-content: space-between; /* 水平分布 */
+        }
+
+        .day {
+            flex: 1; /* 左侧显示日期和星期 */
+            font-weight: bold;
+        }
+
+        .people {
+            flex: 2; /* 右侧显示值班人员 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>值班排班系统</h1>
+        <div class="form-group">
+            <label for="names">输入所有人员名单（每行一个）：</label>
+            <textarea id="names" placeholder="例如：&#10;张三&#10;李四&#10;王五"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="startPerson">选择第一个开始值班的人员：</label>
+            <select id="startPerson"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">选择开始排班日期：</label>
+            <input type="date" id="startDate">
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">选择结束排班日期：</label>
+            <input type="date" id="endDate">
+        </div>
+
+        <div class="form-group">
+            <label for="numPeople">每天值班人数：</label>
+            <input type="number" id="numPeople" value="2" min="1">
+        </div>
+
+        <button onclick="generateSchedule()">生成排班表</button>
+        <button onclick="exportExcel()">导出排班表为Excel</button>
+
+        <div class="schedule-result" id="scheduleResult">
+            <h3>排班结果：</h3>
+            <ul id="resultList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Populate the start person dropdown based on the names input
+        function populateStartPerson() {
+            let names = document.getElementById('names').value.trim().split('\n');
+            let startPersonSelect = document.getElementById('startPerson');
+            startPersonSelect.innerHTML = ''; // 清空之前的选项
+
+            names.forEach((name, index) => {
+                let option = document.createElement('option');
+                option.value = index;
+                option.textContent = name.trim();
+                startPersonSelect.appendChild(option);
+            });
+        }
+
+        document.getElementById('names').addEventListener('input', populateStartPerson);
+
+        // Generate the schedule based on the input values
+        function generateSchedule() {
+            let names = document.getElementById('names').value.trim().split('\n');
+            let startIndex = parseInt(document.getElementById('startPerson').value);
+            let startDate = new Date(document.getElementById('startDate').value);
+            let endDate = new Date(document.getElementById('endDate').value);
+            let numPeople = parseInt(document.getElementById('numPeople').value);
+            let resultList = document.getElementById('resultList');
+
+            resultList.innerHTML = ''; // 清空之前的结果
+
+            if (!startDate || !endDate || names.length === 0 || isNaN(startIndex)) {
+                alert('请填写完整信息！');
+                return;
+            }
+
+            let currentIndex = startIndex;
+            let currentDate = new Date(startDate);
+
+            while (currentDate <= endDate) {
+                let listItem = document.createElement('li');
+                let dutyPeople = [];
+
+                // 选择指定数量的人值班
+                for (let i = 0; i < numPeople; i++) {
+                    dutyPeople.push(names[currentIndex]);
+                    currentIndex = (currentIndex + 1) % names.length;
+                }
+
+                // 获取星期几
+                let weekDay = currentDate.toLocaleString('zh-CN', { weekday: 'long' });
+
+                listItem.innerHTML = `<span class="day">${currentDate.toISOString().split('T')[0]} (${weekDay})</span><span class="people">${dutyPeople.join(' 和 ')}</span>`;
+                resultList.appendChild(listItem);
+
+                // 下一天
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
+
+        // Export the schedule to Excel
+        function exportExcel() {
+            let scheduleList = document.getElementById('resultList').children;
+            let data = [];
+            let header = ["日期", "星期", ...Array.from({ length: parseInt(document.getElementById('numPeople').value) }, (_, i) => `值班人员${i + 1}`)];
+            data.push(header);
+
+            for (let item of scheduleList) {
+                let row = item.innerText.split('(');
+                let date = row[0].trim(); // 日期
+                let weekDay = row[1].split(')')[0].trim(); // 星期
+                let people = row[1].split(')')[1].split('和').map(person => person.trim()); // 值班人员
+
+                // 确保人员数量匹配
+                while (people.length < header.length - 2) {
+                    people.push(""); // 填充空白
+                }
+
+                // 合并到数据行
+                data.push([date, weekDay, ...people]);
+            }
+
+            // 使用SheetJS导出Excel
+            let ws = XLSX.utils.aoa_to_sheet(data);
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "排班表");
+
+            XLSX.writeFile(wb, "排班表.xlsx");
+        }
+    </script>
+
+</body>
+</html>

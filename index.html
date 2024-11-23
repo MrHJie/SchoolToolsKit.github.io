@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        nav {
+            display: block;
+        }
+        a {
+            display: block;
+            text-decoration: none;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            margin: 10px 0;
+            border-radius: 50px;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            position: relative;
+        }
+        a:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-5px);
+        }
+        a::before {
+            content: attr(data-number) ". ";
+            position: absolute;
+            left: 20px;
+            font-size: 1.1em;
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            p {
+                font-size: 1em;
+            }
+            a {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>张老师学校工具</h1>
+        <nav>
+            <a href="Scheduling.html" data-number="1">丁哥在线排班</a>
+            <a href="GradeSubmission.html" data-number="2">期末登记成绩、交卷子</a>
+            <a href="TeachingSteps.html" data-number="3">上课教学步骤</a>
+            <a href="Reimbursement.html" data-number="4">课题报账步骤</a>
+            <a href="Reimbursement.html" data-number="5">新闻信息获取</a>
+        </nav>
+    </div>
+
+</body>
+</html>
