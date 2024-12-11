@@ -5,56 +5,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>上课教学步骤</title>
     <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #2ECC71;
+            --warning: #F1C40F;
+            --danger: #E74C3C;
+            --text: #2C3E50;
+            --background: #ECF0F1;
+        }
+
         body {
             font-family: "Arial", sans-serif;
-            background-color: #f4f4f9;
+            background: var(--background);
             margin: 0;
-            padding: 0;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
         }
+
         .container {
-            width: 80%;
+            width: 90%;
             max-width: 800px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #5D9CEC);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
             overflow: hidden;
         }
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 1.5rem;
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--success) 0%, 
+                var(--warning) 50%, 
+                var(--danger) 100%);
         }
+
         .content {
             padding: 20px;
         }
+
         .step {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-left: 4px solid #007bff;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform-origin: left;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid #E0E4E8;
         }
+
+        .step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .step.completed {
+            background: #F7FFF7;
+            border-color: var(--success);
+        }
+
         .step-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            color: var(--text);
         }
-        .step-description {
-            margin: 0;
-            line-height: 1.6;
+
+        .step-title::before {
+            content: attr(data-step);
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
         }
+
+        .step.completed .step-title::before {
+            content: '✓';
+            background: var(--success);
+        }
+
+        ol {
+            margin: 15px 0 0 55px;
+            padding: 0;
+            color: #666;
+        }
+
+        li {
+            margin: 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        li:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .progress-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #F8FAFC;
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .reward {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: rewardPopup 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes rewardPopup {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
         footer {
-            background-color: #007bff;
+            background: linear-gradient(135deg, var(--primary), #5D9CEC);
             color: white;
             text-align: center;
-            padding: 10px;
+            padding: 15px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -63,50 +208,117 @@
         <header>
             上课教学步骤
         </header>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="completedSteps">0/6</div>
+                    <div class="stat-label">已完成步骤</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="experiencePoints">0</div>
+                    <div class="stat-label">经验值</div>
+                </div>
+            </div>
+        </div>
+
         <div class="content">
-            <div class="step">
-                <div class="step-title">必带物品：</div>
+            <div class="step" onclick="completeStep(this, 0)" data-exp="10">
+                <div class="step-title" data-step="1">必带物品</div>
                 <ol>
                     <li>教师工作手册</li>
                     <li>教案手册（提前俩次课教案）</li>
                 </ol>
-            </div>   
-          
-            <div class="step">
-                <div class="step-title">1. 教师工作手册点名</div>
             </div>
 
-            <div class="step">
-                <div class="step-title">2. 智慧职教+签到</div>
+            <div class="step" onclick="completeStep(this, 1)" data-exp="15">
+                <div class="step-title" data-step="2">教师工作手册点名</div>
             </div>
 
-            <div class="step">
-                <div class="step-title">3. 学委上传假条</div>
+            <div class="step" onclick="completeStep(this, 2)" data-exp="15">
+                <div class="step-title" data-step="3">智慧职教+签到</div>
             </div>
 
-            <div class="step">
-                <div class="step-title">注意事项：</div>
+            <div class="step" onclick="completeStep(this, 3)" data-exp="10">
+                <div class="step-title" data-step="4">学委上传假条</div>
+            </div>
+
+            <div class="step" onclick="completeStep(this, 4)" data-exp="20">
+                <div class="step-title" data-step="5">注意事项</div>
                 <ol>
                     <li>板书要有</li>
                     <li>提问等互动要有</li>
                     <li>不要有迟到进来的同学</li>
                 </ol>
-                </p>
             </div>
 
-            <div class="step">
-                <div class="step-title">学生上课注意事项：</div>
-                <p>为了维护良好的课堂秩序，保证教学质量，请各位同学遵守以下规定：</p>
+            <div class="step" onclick="completeStep(this, 5)" data-exp="30">
+                <div class="step-title" data-step="6">学生上课注意事项</div>
                 <ol>
                     <li>按时上课：请务必按时到课，不得无故迟到或早退。迟到超过10分钟者视为缺勤。</li>
                     <li>旷课：旷课超课堂总数1/3者不得参加考试。</li>
                 </ol>
-                </p>
             </div>
         </div>
+
         <footer>
             © 2024 张老师
         </footer>
     </div>
+
+    <script>
+        let completedSteps = 0;
+        let experience = 0;
+        const completedStepsSet = new Set();
+
+        function completeStep(element, stepIndex) {
+            if (completedStepsSet.has(stepIndex)) return;
+
+            element.classList.add('completed');
+            completedStepsSet.add(stepIndex);
+            completedSteps++;
+            
+            const exp = parseInt(element.dataset.exp);
+            experience += exp;
+
+            updateStats();
+            showReward(exp);
+            checkAllCompleted();
+        }
+
+        function updateStats() {
+            document.getElementById('completedSteps').textContent = `${completedSteps}/6`;
+            document.getElementById('experiencePoints').textContent = experience;
+            document.getElementById('progress').style.width = `${(completedSteps / 6) * 100}%`;
+        }
+
+        function showReward(exp) {
+            const reward = document.createElement('div');
+            reward.className = 'reward';
+            reward.innerHTML = `
+                <h3>✨ 步骤完成！</h3>
+                <p>获得 ${exp} 经验值</p>
+            `;
+            document.body.appendChild(reward);
+            setTimeout(() => reward.remove(), 2000);
+        }
+
+        function checkAllCompleted() {
+            if (completedSteps === 6) {
+                const finalReward = document.createElement('div');
+                finalReward.className = 'reward';
+                finalReward.innerHTML = `
+                    <h3>🏆 恭喜完成所有步骤！</h3>
+                    <p>总经验值: ${experience}</p>
+                    <p>你已经是一位专业的老师了！</p>
+                `;
+                document.body.appendChild(finalReward);
+                setTimeout(() => finalReward.remove(), 3000);
+            }
+        }
+    </script>
 </body>
 </html>
