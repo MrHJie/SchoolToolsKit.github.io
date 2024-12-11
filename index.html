@@ -1,93 +1,371 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navigation Page</title>
+    <title>张老师的学校工具</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --accent: #FFD700;
+            --text: #ffffff;
+            --neon: #ff00ff;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            background: #0f0f1f;
+            color: var(--text);
+            overflow-x: hidden;
+            overflow: hidden;
         }
+
+        /* 星空背景 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* 极光效果 */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+            background: linear-gradient(
+                45deg,
+                rgba(79, 172, 254, 0.1),
+                rgba(0, 242, 254, 0.1),
+                rgba(255, 0, 255, 0.1)
+            );
+            filter: blur(80px);
+            animation: auroraFlow 15s linear infinite;
+        }
+
+        @keyframes auroraFlow {
+            0% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+            100% { transform: translateX(50%) translateY(50%) rotate(360deg); }
+        }
+
         .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            max-width: 800px;
+            margin: 50px auto;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(15, 15, 31, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.3);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         h1 {
             font-size: 3em;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.2em;
             margin-bottom: 30px;
-        }
-        nav {
-            display: block;
-        }
-        a {
-            display: block;
-            text-decoration: none;
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 15px 30px;
-            margin: 10px 0;
-            border-radius: 50px;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-align: center;
             position: relative;
+            color: transparent;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: titleGlow 2s ease-in-out infinite;
+            text-shadow: 
+                0 0 5px var(--primary),
+                0 0 10px var(--primary),
+                0 0 20px var(--neon),
+                0 0 40px var(--neon);
+            letter-spacing: 2px;
         }
-        a:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-5px);
+
+        @keyframes titleGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px var(--primary));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px var(--secondary));
+            }
         }
-        a::before {
-            content: attr(data-number) ". ";
+
+        nav {
+            display: grid;
+            gap: 20px;
+        }
+
+        .nav-item {
+            position: relative;
+            text-decoration: none;
+            color: var(--text);
+            background: rgba(15, 15, 31, 0.6);
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+            box-shadow: 
+                0 0 10px var(--primary),
+                0 0 20px var(--primary),
+                inset 0 0 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .nav-item::before {
+            content: attr(data-number);
+            font-size: 2em;
+            color: var(--accent);
+            margin-right: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        .nav-item::after {
+            content: '';
             position: absolute;
-            left: 20px;
-            font-size: 1.1em;
-            color: #fff;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s ease;
         }
+
+        .nav-item:hover::after {
+            opacity: 0.2;
+            transform: translateY(-50%) scale(2);
+        }
+
+        /* 添加悬浮提示 */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .nav-item:hover .tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 添加图标 */
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            fill: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover .nav-icon {
+            transform: scale(1.2) rotate(360deg);
+        }
+
+        /* 添加装饰元素 */
+        .decoration {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        /* 添加鼠标跟随效果 */
+        .cursor-glow {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, 
+                rgba(79, 172, 254, 0.1) 0%,
+                transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+
             h1 {
                 font-size: 2em;
             }
-            p {
-                font-size: 1em;
-            }
-            a {
-                padding: 12px 25px;
+
+            .nav-item {
+                padding: 15px 20px;
                 font-size: 1em;
             }
         }
     </style>
 </head>
 <body>
+    <div class="stars" id="stars"></div>
+    <div class="aurora"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- 动态背景 -->
+    <div class="background" id="particles"></div>
 
     <div class="container">
-        <h1>张老师学校工具</h1>
+        <h1>张老师的教学助手</h1>
         <nav>
-            <a href="Scheduling.html" data-number="1">丁哥在线排班</a>
-            <a href="GradeSubmission.html" data-number="2">期末登记成绩、交卷子</a>
-            <a href="TeachingSteps.html" data-number="3">上课教学步骤</a>
-            <a href="Reimbursement.html" data-number="4">课题报账步骤</a>
-            <a href="1.html" data-number="5">新闻信息获取</a>
+            <a href="Scheduling.html" class="nav-item" data-number="1">
+                <i class="nav-icon">📅</i>
+                智能排班系统
+                <span class="tooltip">让丁哥帮你轻松搞定排班，告别排班烦恼！</span>
+            </a>
+            <a href="GradeSubmission.html" class="nav-item" data-number="2">
+                <i class="nav-icon">📊</i>
+                期末成绩管理中心
+                <span class="tooltip">期末成绩登记、试卷归档一站式解决方案，轻松搞定期末工作！</span>
+            </a>
+            <a href="TeachingSteps.html" class="nav-item" data-number="3">
+                <i class="nav-icon">🎯</i>
+                教学流程指南
+                <span class="tooltip">标准化教学流程，让每一节课都完美呈现！助你成为课堂达人~</span>
+            </a>
+            <a href="Reimbursement.html" class="nav-item" data-number="4">
+                <i class="nav-icon">💰</i>
+                经费报销向导
+                <span class="tooltip">课题经费报销流程一目了然，再也不用担心报销问题！</span>
+            </a>
         </nav>
     </div>
 
+    <script>
+        // 创建动态背景粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // 随机位置和延迟
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                particle.style.opacity = Math.random();
+                particle.style.transform = `scale(${Math.random()})`;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // 添加3D视差效果
+        function addParallax() {
+            const container = document.querySelector('.container');
+            
+            document.addEventListener('mousemove', (e) => {
+                const x = (window.innerWidth / 2 - e.pageX) / 30;
+                const y = (window.innerHeight / 2 - e.pageY) / 30;
+                
+                container.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+            });
+        }
+
+        // 创建星星
+        function createStars() {
+            const container = document.getElementById('stars');
+            const starCount = 200;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // 随机大小和位置
+                const size = Math.random() * 2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 1}s`);
+                
+                container.appendChild(star);
+            }
+        }
+
+        // 鼠标跟随效果
+        function updateCursorGlow(e) {
+            const glow = document.getElementById('cursorGlow');
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        }
+
+        // 创建装饰元素
+        function createDecorations() {
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 5; i++) {
+                const decoration = document.createElement('div');
+                decoration.className = 'decoration';
+                decoration.style.left = `${Math.random() * 100}%`;
+                decoration.style.top = `${Math.random() * 100}%`;
+                container.appendChild(decoration);
+            }
+        }
+
+        // 初始化
+        window.onload = function() {
+            createParticles();
+            addParallax();
+            createStars();
+            createDecorations();
+            document.addEventListener('mousemove', updateCursorGlow);
+        }
+    </script>
 </body>
 </html>
