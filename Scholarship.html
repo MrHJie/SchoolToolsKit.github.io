@@ -191,7 +191,6 @@
             <div class="level-indicator">当前等级：<span id="levelText">努力冲刺中</span></div>
             <h2>奖学金评分系统</h2>
             <div class="total-score">总分：<span id="totalScore">0</span></div>
-            <div>课程成绩占比：80%</div>
         </div>
 
         <table class="score-table" id="scoreTable">
@@ -213,7 +212,7 @@
         <button class="add-btn" onclick="addRow()">+ 添加课程</button>
 
         <div class="other-requirements">
-            <h3>其他评分项（20%）</h3>
+            <h3>其他评分项</h3>
             <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="30" onchange="calculateTotal()">
                 <label>奖项-国家级（30分）</label>
@@ -285,7 +284,7 @@
                 .reduce((sum, cb) => sum + (parseInt(cb.dataset.points) || 0), 0);
 
             // 计算总分 (课程成绩占80%，其他项占20%)
-            const totalScore = (courseScore * 0.8) + (otherScore * 0.2);
+            const totalScore = courseScore  + otherScore;
             
             // 更新显示
             document.getElementById('totalScore').textContent = totalScore.toFixed(2);
