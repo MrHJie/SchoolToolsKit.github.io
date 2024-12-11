@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奖学金争夺战</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #2ECC71;
+            --warning: #F1C40F;
+            --danger: #E74C3C;
+            --text: #2C3E50;
+            --background: #ECF0F1;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+        }
+
+        body {
+            font-family: "Arial", sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .score-header {
+            background: linear-gradient(135deg, var(--gold), #FFA500);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .score-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            animation: shine 4s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .total-score {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .level-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px;
+            border-radius: 10px;
+            color: var(--text);
+            font-weight: bold;
+        }
+
+        .score-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin: 20px 0;
+        }
+
+        .score-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .score-table tr {
+            transition: all 0.3s ease;
+        }
+
+        .score-table td {
+            background: white;
+            padding: 15px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .score-table tr:hover td {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .course-input {
+            width: 200px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .course-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.2);
+        }
+
+        .score-input {
+            width: 80px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .score-input:focus {
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--success), #27ae60);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .requirement-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .requirement-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--primary);
+        }
+
+        .requirement-item.achieved {
+            background: #F0FFF0;
+            border-left-color: var(--success);
+        }
+
+        .requirement-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .warning-section {
+            background: linear-gradient(135deg, #fff5f5, #ffe8e8);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 6px solid var(--danger);
+            margin-top: 30px;
+            animation: warning-pulse 2s infinite;
+        }
+
+        @keyframes warning-pulse {
+            0% { border-left-color: var(--danger); }
+            50% { border-left-color: #ff8f8f; }
+            100% { border-left-color: var(--danger); }
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: popup 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes popup {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .requirement-details {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 35px;
+            margin-top: 5px;
+        }
+
+        .requirement-item label {
+            font-weight: bold;
+            color: #2C3E50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="score-header">
+            <div class="level-indicator">当前等级：<span id="levelText">努力冲刺中</span></div>
+            <h2>奖学金评分系统</h2>
+            <div class="total-score">总分：<span id="totalScore">0</span></div>
+            <div>课程成绩占比：80%</div>
+        </div>
+
+        <table class="score-table" id="scoreTable">
+            <thead>
+                <tr>
+                    <th>课程名称</th>
+                    <th>分数</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" class="course-input" placeholder="输入课程名称"></td>
+                    <td><input type="number" class="score-input" min="0" max="100" onchange="calculateTotal()"></td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteRow(this)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="add-btn" onclick="addRow()">+ 添加课程</button>
+
+        <div class="other-requirements">
+            <h3>其他评分项（20%）</h3>
+            <div class="requirement-item">
+                <input type="checkbox" class="requirement-checkbox" data-points="30" onchange="calculateTotal()">
+                <label>奖项-国家级（30分）</label>
+                <div class="requirement-details">获得国家级比赛或竞赛奖项</div>
+            </div>
+            <div class="requirement-item">
+                <input type="checkbox" class="requirement-checkbox" data-points="15" onchange="calculateTotal()">
+                <label>奖项-省级（15分）</label>
+                <div class="requirement-details">获得省级比赛或竞赛奖项</div>
+            </div>
+            <div class="requirement-item">
+                <input type="checkbox" class="requirement-checkbox" data-points="10" onchange="calculateTotal()">
+                <label>奖项-校级（10分）</label>
+                <div class="requirement-details">获得校级比赛或竞赛奖项</div>
+            </div>
+            <div class="requirement-item">
+                <input type="checkbox" class="requirement-checkbox" data-points="5" onchange="calculateTotal()">
+                <label>奖项-院级（5分）</label>
+                <div class="requirement-details">优秀党员、团员、团干、军训标兵、学生优秀工作者、文明大学生、国旗护卫队等</div>
+            </div>
+            <div class="requirement-item">
+                <input type="checkbox" class="requirement-checkbox" data-points="10" onchange="calculateTotal()">
+                <label>院系级学生组织正职（10分）</label>
+            </div>
+            <div class="requirement-item">
+                <input type="checkbox" class="requirement-checkbox" data-points="8" onchange="calculateTotal()">
+                <label>院系级学生组织副职、班长、团支书、班助（8分）</label>
+            </div>
+           <div class="requirement-item"></div>
+                <input type="checkbox" class="requirement-checkbox" data-points="6" onchange="calculateTotal()">
+                <label>院系级学生组织部长级(社长)（6分）</label>
+            </div>
+            <div class="requirement-item"></div>
+                <input type="checkbox" class="requirement-checkbox" data-points="3" onchange="calculateTotal()">
+                <label>团总支、学生会优秀干事、优秀信息员、优秀图书馆志愿者（3分）</label>
+            </div>
+            <div class="requirement-item"></div>
+                <input type="checkbox" class="requirement-checkbox" data-points="2" onchange="calculateTotal()">
+                <label>寝室长、班级组长、课代表（2分）</label>
+            </div>
+        </div>
+
+        <div class="warning-section">
+            <div class="warning-title">⚠️ 取消资格情形</div>
+            <ul>
+                <li>任何课程挂科</li>
+                <li>受到纪律处分</li>
+                <li>课程缺考</li>
+                <li>未完成规定的志愿服务时长</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            // 计算课程成绩（80%）
+            const scores = Array.from(document.querySelectorAll('.score-input'))
+                .map(input => parseFloat(input.value) || 0);
+            const validScores = scores.filter(score => score > 0);
+            
+            if (validScores.length === 0) {
+                document.getElementById('totalScore').textContent = '0.00';
+                return;
+            }
+
+            const avgScore = validScores.reduce((a, b) => a + b, 0) / validScores.length;
+            const courseScore = avgScore * 0.8;
+
+            // 计算其他项（20%）
+            const checkboxes = document.querySelectorAll('.requirement-checkbox');
+            const otherScore = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .reduce((sum, cb) => sum + (parseInt(cb.dataset.points) || 0), 0);
+
+            // 计算总分
+            const totalScore = courseScore + otherScore;
+            
+            // 更新显示
+            document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+
+            // 检查是否有不及格课程
+            const hasFailingScore = scores.some(score => score > 0 && score < 60);
+            if (hasFailingScore) {
+                showWarning('警告：存在不及格课程，将失去评选资格！');
+            }
+        }
+
+        function showWarning(message) {
+            const warning = document.createElement('div');
+            warning.className = 'achievement-popup warning';
+            warning.innerHTML = `
+                <h3>⚠️ 提示</h3>
+                <p>${message}</p>
+            `;
+            document.body.appendChild(warning);
+            setTimeout(() => warning.remove(), 2000);
+        }
+
+        function addRow() {
+            const table = document.getElementById('scoreTable');
+            const newRow = table.insertRow();
+            newRow.innerHTML = '<td><input type="text" class="course-input" placeholder="输入课程名称"></td>' +
+                               '<td><input type="number" class="score-input" min="0" max="100" onchange="calculateTotal()"></td>' +
+                               '<td><button class="delete-btn" onclick="deleteRow(this)">删除</button></td>';
+        }
+
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
+</body>
+</html> 
