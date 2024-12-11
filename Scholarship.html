@@ -283,7 +283,7 @@
                 .filter(cb => cb.checked)
                 .reduce((sum, cb) => sum + (parseInt(cb.dataset.points) || 0), 0);
 
-            // 计算总分 (课程成绩占80%，其他项占20%)
+            // 计算总分
             const totalScore = courseScore  + otherScore;
             
             // 更新显示
