@@ -277,7 +277,7 @@
             const avgScore = validScores.reduce((a, b) => a + b, 0) / validScores.length;
             const courseScore = avgScore;
 
-            // 计算其他项（20%）
+            // 计算其他项
             const checkboxes = document.querySelectorAll('.requirement-checkbox');
             const otherScore = Array.from(checkboxes)
                 .filter(cb => cb.checked)
