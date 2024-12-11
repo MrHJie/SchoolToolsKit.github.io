@@ -3,100 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>期末登记成绩与交卷步骤</title>
+    <title>期末任务大冒险</title>
     <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #2ECC71;
+            --warning: #F1C40F;
+            --danger: #E74C3C;
+            --text: #2C3E50;
+            --background: #ECF0F1;
+        }
+
         body {
             font-family: "Arial", sans-serif;
-            background-color: #f4f4f9;
+            background: var(--background);
             margin: 0;
-            padding: 0;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
         }
+
         .container {
-            width: 80%;
+            width: 90%;
             max-width: 800px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #5D9CEC);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
             overflow: hidden;
         }
-        header {
-            background-color: #007bff;
-            color: white;
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--success) 0%, 
+                var(--warning) 50%, 
+                var(--danger) 100%);
+        }
+
+        .progress-container {
             padding: 20px;
             text-align: center;
-            font-size: 1.5rem;
         }
+
+        .progress-bar {
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
         .content {
             padding: 20px;
         }
-        .step {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-left: 4px solid #007bff;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+
+        .quest-list {
+            list-style: none;
+            padding: 0;
         }
-        .step-title {
+
+        .quest {
+            margin: 15px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform-origin: left;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid #E0E4E8;
+        }
+
+        .quest.completed {
+            background: #F7FFF7;
+            border-color: var(--success);
+        }
+
+        .quest-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quest-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .quest-title {
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            color: var(--text);
         }
-        .step-description {
-            margin: 0;
-            line-height: 1.6;
+
+        .quest-content {
+            margin-top: 15px;
+            padding-left: 55px;
+            color: #666;
         }
-        footer {
-            background-color: #007bff;
-            color: white;
+
+        .quest:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .quest.completed .quest-icon {
+            background: var(--success);
+        }
+
+        .quest.completed .quest-icon::after {
+            content: '✓';
+            font-size: 24px;
+        }
+
+        .reward {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            padding: 10px;
+            animation: rewardPopup 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes rewardPopup {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #F8FAFC;
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            期末登记成绩与交卷步骤
+            期末任务大冒险
         </header>
-        <div class="content">
-            <div class="step">
-                <div class="step-title">1. 教务系统录入成绩</div>
-            </div>
 
-            <div class="step">
-                <div class="step-title">2. 教师工作手册写完整</div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
             </div>
-
-            <div class="step">
-                <div class="step-title">3. 装订好的卷子</div>
-                <p class="step-description">将卷子按以下顺序装订：
-                <ol>
-                    <li>封皮</li>
-                    <li>试卷分析 (B5)</li>
-                    <li>试卷答案 (B5)</li>
-                    <li>空白卷子 (A3)</li>
-                    <li>答题卡 (A3，学号从小到大排序)</li>
-                    <li>封底</li>
-                </ol>
-                </p>
-            </div>
-
-            <div class="step">
-                <div class="step-title">4. 打印成绩单交到教务科并签字</div>
-            </div>
-
-            <div class="step">
-                <div class="step-title">5. 教务科填写教学工作量表</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="completedTasks">0/5</div>
+                    <div class="stat-label">已完成任务</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="experiencePoints">0</div>
+                    <div class="stat-label">经验值</div>
+                </div>
             </div>
         </div>
-        <footer>
-            © 2024 张老师
-        </footer>
+
+        <div class="content">
+            <ul class="quest-list">
+                <li class="quest" onclick="completeQuest(this, 0)">
+                    <div class="quest-header">
+                        <div class="quest-icon">1</div>
+                        <div class="quest-title">教务系统录入成绩</div>
+                    </div>
+                    <div class="quest-content">
+                        <p>完成后可获得: 20经验值</p>
+                    </div>
+                </li>
+
+                <li class="quest" onclick="completeQuest(this, 1)">
+                    <div class="quest-header">
+                        <div class="quest-icon">2</div>
+                        <div class="quest-title">教师工作手册填写</div>
+                    </div>
+                    <div class="quest-content">
+                        <p>完成后可获得: 15经验值</p>
+                    </div>
+                </li>
+
+                <li class="quest" onclick="completeQuest(this, 2)">
+                    <div class="quest-header">
+                        <div class="quest-icon">3</div>
+                        <div class="quest-title">试卷装订大师</div>
+                    </div>
+                    <div class="quest-content">
+                        <p>按顺序装订：封皮 → 试卷分析 → 试卷答案 → 空白卷子 → 答题卡 → 封底</p>
+                        <p>完成后可获得: 25经验值</p>
+                    </div>
+                </li>
+
+                <li class="quest" onclick="completeQuest(this, 3)">
+                    <div class="quest-header">
+                        <div class="quest-icon">4</div>
+                        <div class="quest-title">成绩单提交与签字</div>
+                    </div>
+                    <div class="quest-content">
+                        <p>完成后可获得: 15经验值</p>
+                    </div>
+                </li>
+
+                <li class="quest" onclick="completeQuest(this, 4)">
+                    <div class="quest-header">
+                        <div class="quest-icon">5</div>
+                        <div class="quest-title">教学工作量登记</div>
+                    </div>
+                    <div class="quest-content">
+                        <p>完成后可获得: 25经验值</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
+
+    <script>
+        let completedQuests = 0;
+        let experience = 0;
+        const questExperience = [20, 15, 25, 15, 25];
+        const completedQuestsSet = new Set();
+
+        function completeQuest(element, questIndex) {
+            if (completedQuestsSet.has(questIndex)) return;
+
+            element.classList.add('completed');
+            completedQuestsSet.add(questIndex);
+            completedQuests++;
+            experience += questExperience[questIndex];
+
+            updateStats();
+            showReward(questExperience[questIndex]);
+            checkAllCompleted();
+        }
+
+        function updateStats() {
+            document.getElementById('completedTasks').textContent = `${completedQuests}/5`;
+            document.getElementById('experiencePoints').textContent = experience;
+            document.getElementById('progress').style.width = `${(completedQuests / 5) * 100}%`;
+        }
+
+        function showReward(exp) {
+            const reward = document.createElement('div');
+            reward.className = 'reward';
+            reward.innerHTML = `
+                <h3>任务完成！</h3>
+                <p>获得 ${exp} 经验值</p>
+            `;
+            document.body.appendChild(reward);
+            setTimeout(() => reward.remove(), 2000);
+        }
+
+        function checkAllCompleted() {
+            if (completedQuests === 5) {
+                const finalReward = document.createElement('div');
+                finalReward.className = 'reward';
+                finalReward.innerHTML = `
+                    <h3>🏆 恭喜完成所有任务！</h3>
+                    <p>总经验值: ${experience}</p>
+                    <p>你是最棒的！</p>
+                `;
+                document.body.appendChild(finalReward);
+                setTimeout(() => finalReward.remove(), 3000);
+            }
+        }
+    </script>
 </body>
 </html>
