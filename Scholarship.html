@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>奖学金争夺战</title>
+    <title>奖学金</title>
     <style>
         :root {
             --primary: #4A90E2;
@@ -103,20 +103,11 @@
             font-weight: bold;
         }
 
-        .score-table tr {
-            transition: all 0.3s ease;
-        }
-
         .score-table td {
             background: white;
             padding: 15px;
             border: none;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .score-table tr:hover td {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .course-input {
@@ -127,11 +118,6 @@
             transition: all 0.3s ease;
         }
 
-        .course-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(74, 144, 226, 0.2);
-        }
-
         .score-input {
             width: 80px;
             padding: 10px;
@@ -139,12 +125,6 @@
             border-radius: 8px;
             text-align: center;
             font-size: 1.1em;
-            transition: all 0.3s ease;
-        }
-
-        .score-input:focus {
-            border-color: var(--success);
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
         }
 
         .add-btn {
@@ -157,12 +137,6 @@
             font-size: 1.1em;
             margin-top: 20px;
             transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-
-        .add-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .delete-btn {
@@ -172,11 +146,6 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            transform: scale(1.05);
         }
 
         .requirement-item {
@@ -186,24 +155,12 @@
             margin: 10px 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-
-        .requirement-item:hover {
-            transform: translateX(5px);
-            border-left-color: var(--primary);
-        }
-
-        .requirement-item.achieved {
-            background: #F0FFF0;
-            border-left-color: var(--success);
         }
 
         .requirement-checkbox {
             width: 20px;
             height: 20px;
             margin-right: 15px;
-            cursor: pointer;
         }
 
         .warning-section {
@@ -212,13 +169,6 @@
             border-radius: 15px;
             border-left: 6px solid var(--danger);
             margin-top: 30px;
-            animation: warning-pulse 2s infinite;
-        }
-
-        @keyframes warning-pulse {
-            0% { border-left-color: var(--danger); }
-            50% { border-left-color: #ff8f8f; }
-            100% { border-left-color: var(--danger); }
         }
 
         .achievement-popup {
@@ -231,26 +181,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             text-align: center;
-            animation: popup 0.5s ease-out;
             z-index: 1000;
-        }
-
-        @keyframes popup {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .requirement-details {
-            font-size: 0.9em;
-            color: #666;
-            margin-left: 35px;
-            margin-top: 5px;
-        }
-
-        .requirement-item label {
-            font-weight: bold;
-            color: #2C3E50;
         }
     </style>
 </head>
@@ -275,9 +206,7 @@
                 <tr>
                     <td><input type="text" class="course-input" placeholder="输入课程名称"></td>
                     <td><input type="number" class="score-input" min="0" max="100" onchange="calculateTotal()"></td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteRow(this)">删除</button>
-                    </td>
+                    <td><button class="delete-btn" onclick="deleteRow(this)">删除</button></td>
                 </tr>
             </tbody>
         </table>
@@ -288,22 +217,18 @@
             <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="30" onchange="calculateTotal()">
                 <label>奖项-国家级（30分）</label>
-                <div class="requirement-details">获得国家级比赛或竞赛奖项</div>
             </div>
             <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="15" onchange="calculateTotal()">
                 <label>奖项-省级（15分）</label>
-                <div class="requirement-details">获得省级比赛或竞赛奖项</div>
             </div>
             <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="10" onchange="calculateTotal()">
                 <label>奖项-校级（10分）</label>
-                <div class="requirement-details">获得校级比赛或竞赛奖项</div>
             </div>
             <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="5" onchange="calculateTotal()">
                 <label>奖项-院级（5分）</label>
-                <div class="requirement-details">优秀党员、团员、团干、军训标兵、学生优秀工作者、文明大学生、国旗护卫队等</div>
             </div>
             <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="10" onchange="calculateTotal()">
@@ -313,15 +238,15 @@
                 <input type="checkbox" class="requirement-checkbox" data-points="8" onchange="calculateTotal()">
                 <label>院系级学生组织副职、班长、团支书、班助（8分）</label>
             </div>
-           <div class="requirement-item"></div>
+            <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="6" onchange="calculateTotal()">
                 <label>院系级学生组织部长级(社长)（6分）</label>
             </div>
-            <div class="requirement-item"></div>
+            <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="3" onchange="calculateTotal()">
                 <label>团总支、学生会优秀干事、优秀信息员、优秀图书馆志愿者（3分）</label>
             </div>
-            <div class="requirement-item"></div>
+            <div class="requirement-item">
                 <input type="checkbox" class="requirement-checkbox" data-points="2" onchange="calculateTotal()">
                 <label>寝室长、班级组长、课代表（2分）</label>
             </div>
@@ -359,8 +284,8 @@
                 .filter(cb => cb.checked)
                 .reduce((sum, cb) => sum + (parseInt(cb.dataset.points) || 0), 0);
 
-            // 计算总分
-            const totalScore = courseScore + otherScore;
+            // 计算总分 (课程成绩占80%，其他项占20%)
+            const totalScore = (courseScore * 0.8) + (otherScore * 0.2);
             
             // 更新显示
             document.getElementById('totalScore').textContent = totalScore.toFixed(2);
@@ -394,6 +319,7 @@
         function deleteRow(button) {
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
+            calculateTotal();
         }
     </script>
 </body>
