@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实习冒险之旅</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #2ECC71;
+            --warning: #F1C40F;
+            --danger: #E74C3C;
+            --text: #2C3E50;
+            --background: #ECF0F1;
+        }
+
+        body {
+            font-family: "Arial", sans-serif;
+            background: var(--background);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #5D9CEC);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--success) 0%, 
+                var(--warning) 50%, 
+                var(--danger) 100%);
+        }
+
+        .phase {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .phase-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .phase-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task {
+            margin: 10px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task:hover {
+            transform: translateX(10px);
+            background: #e9ecef;
+        }
+
+        .task.completed {
+            border-left-color: var(--success);
+            background: #F0FFF0;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .task.completed .task-checkbox {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task.completed .task-checkbox::after {
+            content: '✓';
+            color: white;
+        }
+
+        .progress-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #F8FAFC;
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .reward {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: rewardPopup 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes rewardPopup {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .sub-task {
+            margin-left: 30px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 100;
+        }
+
+        .task:hover .tooltip {
+            display: block;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary), #5D9CEC);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            实习冒险之旅 🚀
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="completedTasks">0/15</div>
+                    <div class="stat-label">已完成任务</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="experiencePoints">0</div>
+                    <div class="stat-label">经验值</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-icon">📋</div>
+                <div class="phase-title">实习前准备阶段</div>
+            </div>
+            <div class="task-list">
+                <div class="task" onclick="completeTask(this)" data-exp="20">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交岗位实习审批表
+                        <div class="tooltip">请确保PDF格式清晰可读</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="20">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交三方协议
+                        <div class="tooltip">需要各方签字盖红章</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="15">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交公司营业执照
+                        <div class="tooltip">必须加盖红色公章</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="15">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交实习单位接收函
+                        <div class="tooltip">需要单位盖章确认</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="15">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交工作证明
+                        <div class="tooltip">需要单位开具正式证明</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="20">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交家长知情同意书
+                        <div class="tooltip">需要家长或法定监护人签字</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="15">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交安全承诺书
+                        <div class="tooltip">请认真阅读并签字确认</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="15">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交保险证明
+                        <div class="tooltip">需要提交首页、尾页和个人信息页（请圈出姓名）</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="20">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        上传材料至习讯云
+                        <div class="tooltip">请按要求完整上传所有材料</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实习中阶段 -->
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-icon">⚡</div>
+                <div class="phase-title">实习进行阶段</div>
+            </div>
+            <div class="task-list">
+                <div class="task" onclick="completeTask(this)" data-exp="10">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        每日签到打卡
+                        <div class="tooltip">工作日需要按时完成签到</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="25">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交周报告
+                        <div class="tooltip">每周五前提交本周工作总结</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="30">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交月度报告
+                        <div class="tooltip">每月28日前提交月度工作总结</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实习后阶段 -->
+        <div class="phase">
+            <div class="phase-header">
+                <div class="phase-icon">🎯</div>
+                <div class="phase-title">实习完成阶段</div>
+            </div>
+            <div class="task-list">
+                <div class="task" onclick="completeTask(this)" data-exp="25">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交结束实习申请
+                        <div class="tooltip">需要单位签字确认</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="20">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        填报就业去向
+                        <div class="tooltip">请如实填写就业信息</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="25">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交实习考评成绩
+                        <div class="tooltip">需要指导老师评分确认</div>
+                    </div>
+                </div>
+                <div class="task" onclick="completeTask(this)" data-exp="30">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        提交实习总结报告
+                        <div class="tooltip">请认真总结实习收获与体会</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            © 2024 实习管理系统
+        </footer>
+    </div>
+
+    <script>
+        let completedTasks = 0;
+        let experience = 0;
+        const totalTasks = 15;
+        const completedTasksSet = new Set();
+
+        function completeTask(element) {
+            if (element.classList.contains('completed')) {
+                return;
+            }
+
+            element.classList.add('completed');
+            completedTasks++;
+            
+            const exp = parseInt(element.dataset.exp);
+            experience += exp;
+
+            updateStats();
+            showReward(exp);
+            checkAllCompleted();
+        }
+
+        function updateStats() {
+            document.getElementById('completedTasks').textContent = `${completedTasks}/${totalTasks}`;
+            document.getElementById('experiencePoints').textContent = experience;
+            document.getElementById('progress').style.width = `${(completedTasks / totalTasks) * 100}%`;
+        }
+
+        function showReward(exp) {
+            const reward = document.createElement('div');
+            reward.className = 'reward';
+            reward.innerHTML = `
+                <h3>✨ 任务完成！</h3>
+                <p>获得 ${exp} ��验值</p>
+            `;
+            document.body.appendChild(reward);
+            setTimeout(() => reward.remove(), 2000);
+        }
+
+        function checkAllCompleted() {
+            if (completedTasks === totalTasks) {
+                const finalReward = document.createElement('div');
+                finalReward.className = 'reward';
+                finalReward.innerHTML = `
+                    <h3>🏆 恭喜完成所有任务！</h3>
+                    <p>总经验值: ${experience}</p>
+                    <p>你已经是实习达人了！</p>
+                `;
+                document.body.appendChild(finalReward);
+                setTimeout(() => finalReward.remove(), 3000);
+            }
+        }
+    </script>
+</body>
+</html>
