@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 趣味通知生成器 🎮</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .input-group:hover {
+            transform: scale(1.02);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #6e8efb;
+            box-shadow: 0 0 10px rgba(110, 142, 251, 0.3);
+            outline: none;
+        }
+
+        .emoji-label {
+            position: absolute;
+            right: 10px;
+            top: 40px;
+            font-size: 1.5em;
+            opacity: 0.7;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #6e8efb, #a777e3);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(45deg, #6e8efb, #a777e3);
+            transition: width 0.5s;
+        }
+
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: sparkle 1s forwards;
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        .deadline-warning {
+            color: #ff4757;
+            font-weight: bold;
+            padding: 10px;
+            border: 2px solid #ff4757;
+            border-radius: 8px;
+            margin: 15px 0;
+            background-color: rgba(255, 71, 87, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ 趣味通知生成器 ✨</h1>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="input-group">
+            <label for="title">通知标题</label>
+            <input type="text" id="title" placeholder="请输入通知标题" required>
+            <span class="emoji-label">📢</span>
+        </div>
+
+        <div class="input-group">
+            <label for="greeting">称呼</label>
+            <input type="text" id="greeting" placeholder="请输入称呼" required>
+            <span class="emoji-label">👋</span>
+        </div>
+
+        <div class="input-group">
+            <label for="content">通知内容</label>
+            <textarea id="content" rows="4" placeholder="请输入通知内容" required></textarea>
+            <span class="emoji-label">📝</span>
+        </div>
+
+        <div class="input-group">
+            <label for="location">地点</label>
+            <input type="text" id="location" placeholder="请输入地点" required>
+            <span class="emoji-label">📍</span>
+        </div>
+
+        <div class="input-group">
+            <label for="startTime">开始时间</label>
+            <input type="datetime-local" id="startTime" required>
+            <span class="emoji-label">🕐</span>
+        </div>
+
+        <div class="input-group">
+            <label for="endTime">结束时间</label>
+            <input type="datetime-local" id="endTime" required>
+            <span class="emoji-label">🕒</span>
+        </div>
+
+        <div class="input-group">
+            <label for="digitalSubmission">电子版材料提交要求</label>
+            <textarea id="digitalSubmission" rows="3" placeholder="请输入电子版材料提交要求"></textarea>
+            <span class="emoji-label">💻</span>
+        </div>
+
+        <div class="input-group">
+            <label for="paperSubmission">纸质版材料提交要求</label>
+            <textarea id="paperSubmission" rows="3" placeholder="请输入纸质版材料提交要求"></textarea>
+            <span class="emoji-label">📋</span>
+        </div>
+
+        <button onclick="generateNotification()">✨ 生成通知 ✨</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function generateNotification() {
+            // 进度条动画
+            let progress = 0;
+            const progressBar = document.getElementById('progress');
+            const interval = setInterval(() => {
+                progress += 2;
+                progressBar.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 20);
+
+            // 添加闪光效果
+            document.addEventListener('mousemove', createSparkle);
+        }
+
+        function createSparkle(e) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.innerHTML = '✨';
+            sparkle.style.left = e.pageX + 'px';
+            sparkle.style.top = e.pageY + 'px';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+
+        function showResult() {
+            const result = document.getElementById('result');
+            const title = document.getElementById('title').value;
+            const greeting = document.getElementById('greeting').value;
+            const content = document.getElementById('content').value;
+            const location = document.getElementById('location').value;
+            const startTime = new Date(document.getElementById('startTime').value).toLocaleString();
+            const endTime = new Date(document.getElementById('endTime').value).toLocaleString();
+            const digitalSubmission = document.getElementById('digitalSubmission').value;
+            const paperSubmission = document.getElementById('paperSubmission').value;
+
+            result.innerHTML = `
+                <h2>🌟 ${title} 🌟</h2>
+                <p>${greeting}：</p>
+                <p>${content}</p>
+                <p>📍 活动地点：${location}</p>
+                <p>⏰ 开始时间：${startTime}</p>
+                <p>⌛ 结束时间：${endTime}</p>
+                <p>💻 电子版材料提交：${digitalSubmission}</p>
+                <p>📋 纸质版材料提交：${paperSubmission}</p>
+                <div class="deadline-warning">
+                    ⚠️ 特别提醒：超过截止时间将不再接受任何形式的报名和材料提交，请合理安排时间！
+                </div>
+                <p>🌈 期待您的参与！</p>
+            `;
+            result.style.display = 'block';
+        }
+    </script>
+</body>
+</html> 
