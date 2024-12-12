@@ -183,6 +183,145 @@
             text-align: center;
             z-index: 1000;
         }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+                margin: 0;
+                border-radius: 15px;
+            }
+
+            .score-header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .total-score {
+                font-size: 2em;
+            }
+
+            .level-indicator {
+                position: static;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            /* 表格响应式处理 */
+            .score-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .score-table th,
+            .score-table td {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .course-input {
+                width: 120px;
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .score-input {
+                width: 60px;
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .delete-btn {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .add-btn {
+                width: 100%;
+                padding: 10px;
+                margin: 15px 0;
+                font-size: 16px;
+            }
+
+            /* 其他评分项优化 */
+            .requirement-item {
+                padding: 12px;
+                margin: 8px 0;
+                font-size: 14px;
+            }
+
+            .requirement-checkbox {
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
+            }
+
+            /* 警告区域优化 */
+            .warning-section {
+                padding: 15px;
+                margin-top: 20px;
+                font-size: 14px;
+            }
+
+            .warning-section ul {
+                padding-left: 20px;
+                margin: 10px 0;
+            }
+
+            /* 弹窗优化 */
+            .achievement-popup {
+                width: 80%;
+                max-width: 300px;
+                padding: 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* 超小屏幕额外优化 */
+        @media screen and (max-width: 320px) {
+            .container {
+                padding: 10px;
+            }
+
+            .score-header {
+                padding: 15px;
+            }
+
+            .total-score {
+                font-size: 1.8em;
+            }
+
+            .course-input {
+                width: 100px;
+            }
+
+            .score-input {
+                width: 50px;
+            }
+
+            .requirement-item {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+
+        /* 横屏优化 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .container {
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+
+            .score-header {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+        }
     </style>
 </head>
 <body>
@@ -293,7 +432,7 @@
             // 更新显示
             document.getElementById('totalScore').textContent = totalScore.toFixed(2);
 
-            // 检查是否有不及格课程
+            // 检查是否有不���格课程
             const hasFailingScore = scores.some(score => score > 0 && score < 60);
             if (hasFailingScore) {
                 showWarning('警告：存在不及格课程，将失去评选资格！');
