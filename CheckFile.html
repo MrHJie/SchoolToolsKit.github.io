@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趣味文件检查器 🎮</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --error-color: #f44336;
+            --success-color: #4CAF50;
+            --warning-color: #ff9800;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+        }
+
+        body::before {
+            top: -100px;
+            left: -100px;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        body::after {
+            bottom: -100px;
+            right: -100px;
+            animation: float 10s infinite ease-in-out reverse;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .game-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .checklist-section, .upload-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .checklist-section:hover, .upload-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
+        }
+
+        .checklist-container {
+            position: relative;
+            min-height: 200px;
+        }
+
+        .checklist {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        .upload-zone {
+            border: 2px dashed rgba(76, 175, 80, 0.5);
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .upload-zone.drag-over {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .file-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease-in;
+        }
+
+        .file-item .file-name {
+            flex: 1;
+        }
+
+        .file-item .remove-btn {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .check-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            padding: 15px 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .check-btn:hover {
+            background: linear-gradient(45deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .result-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            animation: slideIn 0.3s ease-in;
+        }
+
+        .result-item.success {
+            background: #e8f5e9;
+            color: var(--success-color);
+        }
+
+        .result-item.error {
+            background: #ffebee;
+            color: var(--error-color);
+        }
+
+        .result-item.warning {
+            background: #fff3e0;
+            color: var(--warning-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f2f5;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            position: absolute;
+            animation: confetti 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(30px) rotate(10deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body::before,
+            body::after {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+
+            .game-container {
+                flex-direction: column;
+            }
+
+            .checklist-section, .upload-section {
+                width: 100%;
+            }
+        }
+
+        .achievement {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+            animation: slideIn 0.3s ease-in;
+        }
+
+        .achievement-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 趣味文件检查器</h1>
+            <p>让文件检查变得有趣！</p>
+        </div>
+
+        <div class="game-container">
+            <div class="checklist-section">
+                <h2>📝 文件清单</h2>
+                <p>每行输入一个文件名</p>
+                <div class="checklist-container">
+                    <textarea class="checklist" placeholder="example1.txt&#10;example2.pdf&#10;example3.doc"></textarea>
+                </div>
+            </div>
+
+            <div class="upload-section">
+                <h2>📤 上传文件</h2>
+                <div class="upload-zone" id="uploadZone">
+                    <p>拖放文件到这里或点击上传</p>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </div>
+        </div>
+
+        <button class="check-btn" onclick="checkFiles()">开始检查 🚀</button>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="results" id="results"></div>
+    </div>
+
+    <div class="achievement" id="achievement">
+        <span class="achievement-icon">🏆</span>
+        <span class="achievement-text"></span>
+    </div>
+
+    <script>
+        let uploadedFiles = new Set();
+        let achievements = {
+            firstUpload: false,
+            perfectMatch: false,
+            speedMaster: false
+        };
+
+        function showAchievement(message) {
+            const achievement = document.getElementById('achievement');
+            achievement.querySelector('.achievement-text').textContent = message;
+            achievement.style.display = 'block';
+            setTimeout(() => {
+                achievement.style.display = 'none';
+            }, 3000);
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 50%)`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 1000);
+            }
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progress').style.width = percent + '%';
+        }
+
+        function handleFileUpload(files) {
+            for (let file of files) {
+                if (!uploadedFiles.has(file.name)) {
+                    uploadedFiles.add(file.name);
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <span class="file-name">${file.name}</span>
+                        <button class="remove-btn" onclick="removeFile('${file.name}')">❌</button>
+                    `;
+                    document.getElementById('fileList').appendChild(fileItem);
+                }
+            }
+
+            if (!achievements.firstUpload) {
+                achievements.firstUpload = true;
+                showAchievement('🎉 解锁成就：首次上传！');
+            }
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles.delete(fileName);
+            const fileList = document.getElementById('fileList');
+            const fileItems = fileList.getElementsByClassName('file-item');
+            for (let item of fileItems) {
+                if (item.querySelector('.file-name').textContent === fileName) {
+                    item.remove();
+                    break;
+                }
+            }
+        }
+
+        function checkFiles() {
+            const checklist = document.querySelector('.checklist').value
+                .split('\n')
+                .filter(name => name.trim())
+                .map(name => name.trim());
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            results.style.display = 'block';
+
+            let matchCount = 0;
+            let totalFiles = checklist.length;
+            updateProgress(0);
+
+            checklist.forEach((fileName, index) => {
+                setTimeout(() => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+
+                    if (uploadedFiles.has(fileName)) {
+                        resultItem.classList.add('success');
+                        resultItem.textContent = `✅ ${fileName} - 完美匹配！`;
+                        matchCount++;
+                    } else {
+                        resultItem.classList.add('error');
+                        resultItem.textContent = `❌ ${fileName} - 未找到文件`;
+                    }
+
+                    results.appendChild(resultItem);
+                    updateProgress(((index + 1) / totalFiles) * 100);
+
+                    if (index === totalFiles - 1) {
+                        if (matchCount === totalFiles && totalFiles > 0) {
+                            if (!achievements.perfectMatch) {
+                                achievements.perfectMatch = true;
+                                showAchievement('🌟 解锁成就：完美匹配大师！');
+                                createConfetti();
+                            }
+                        }
+                    }
+                }, index * 500);
+            });
+
+            // 检查上传的多余文件
+            uploadedFiles.forEach(fileName => {
+                if (!checklist.includes(fileName)) {
+                    setTimeout(() => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item warning';
+                        resultItem.textContent = `⚠️ ${fileName} - 额外的文件`;
+                        results.appendChild(resultItem);
+                    }, checklist.length * 500);
+                }
+            });
+        }
+
+        // 拖放处理
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFileUpload(e.target.files));
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('drag-over');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('drag-over');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            handleFileUpload(e.dataTransfer.files);
+        });
+    </script>
+</body>
+</html> 
