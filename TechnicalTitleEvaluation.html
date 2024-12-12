@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师成长之路 - 职称评审闯关游戏</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FF9800;
+            --background-color: #2C3E50;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            background-image: 
+                linear-gradient(45deg, #34495e 25%, transparent 25%),
+                linear-gradient(-45deg, #34495e 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #34495e 75%),
+                linear-gradient(-45deg, transparent 75%, #34495e 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(white 1px, transparent 1px),
+                radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            animation: twinkle 3s infinite alternate;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 0 20px;
+        }
+
+        .title {
+            text-align: center;
+            color: #FFD700;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5),
+                         0 0 20px rgba(255,215,0,0.3),
+                         0 0 30px rgba(255,215,0,0.2);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .exp-bar {
+            background: rgba(255,255,255,0.1);
+            height: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .exp-progress {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            height: 100%;
+            width: 0%;
+            border-radius: 8px;
+            transition: width 1s ease;
+            position: relative;
+            animation: fillProgress 2s ease forwards;
+        }
+
+        @keyframes fillProgress {
+            from { width: 0%; }
+            to { width: 75%; }
+        }
+
+        .level {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            width: calc(100% - 50px);
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2),
+                        0 0 40px rgba(255,215,0,0.1);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        .level:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255,215,0,0.4),
+                        0 0 60px rgba(255,215,0,0.2);
+        }
+
+        .level-title {
+            text-align: center;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: -20px -20px 15px -20px;
+        }
+
+        .level.assistant .level-title { background-color: #9E9E9E; }
+        .level.lecturer .level-title { background-color: #2196F3; }
+        .level.associate .level-title { background-color: #FF9800; }
+        .level.professor .level-title { background-color: #4CAF50; }
+
+        .requirements {
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .requirement-item {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirement-item::before {
+            content: '🎯';
+            margin-right: 8px;
+        }
+
+        .materials {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .materials-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .material-item {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .material-item::before {
+            content: '📄';
+            margin-right: 8px;
+        }
+
+        .common-requirements {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .common-title {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: #FFD700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pixel-button {
+            background: #4CAF50;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            position: relative;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .pixel-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 3%, rgba(255,255,255,0.8) 3%, transparent 35%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            20% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .level-path {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+            padding: 10px;
+        }
+
+        .level-details {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .level-details h3 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .level-details .detail-section h4 {
+            color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 15px 0 10px 0;
+        }
+
+        .level {
+            padding: 25px;
+            height: auto;
+            min-height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .level {
+                padding: 20px;
+                width: calc(100% - 40px);
+                margin-bottom: 20px;
+            }
+            
+            .level-details {
+                padding: 15px;
+                margin-top: 25px;
+            }
+            
+            .level-details h3 {
+                font-size: 1.1em;
+            }
+        }
+
+        .progress-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #FFD700;
+            box-shadow: 0 0 10px #FFD700;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.8em;
+            }
+
+            .progress-indicator {
+                display: none;
+            }
+
+            .level {
+                min-height: 250px;
+            }
+
+            .pixel-button {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .detail-section {
+            padding: 10px;
+        }
+        
+        .detail-section h4 {
+            color: #FFD700;
+            margin: 15px 0 10px 0;
+        }
+        
+        .detail-section ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .detail-section li {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .level-details {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* 美化滚动条 */
+        .level-details::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .level-details::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .level-details::-webkit-scrollbar-thumb {
+            background: rgba(255,215,0,0.5);
+            border-radius: 4px;
+        }
+
+        .detail-section h4[data-type="common"] {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .level.common .level-title {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+        }
+        
+        .level.common .badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="title">🎮 教师成长之路 - 职称评审闯关游戏 🏆</h1>
+        
+        <div class="exp-bar">
+            <div class="exp-progress"></div>
+        </div>
+        
+        <div class="level-path">
+            <!-- 添加通用要求卡片 -->
+            <div class="level common">
+                <div class="badge">🌟</div>
+                <div class="level-title">通用要求</div>
+                <div class="requirements">
+                    <div class="requirement-item">思想政治和师德师风考核</div>
+                    <div class="requirement-item">继续教育要求</div>
+                    <div class="requirement-item">教师资格证书</div>
+                </div>
+                <div class="materials">
+                    <div class="materials-title">📚 所需材料</div>
+                    <div class="material-item">年度考核表</div>
+                    <div class="material-item">继续教育审验卡</div>
+                    <div class="material-item">资格证书</div>
+                </div>
+                <div class="level-details">
+                    <h3>基本要求</h3>
+                    <div class="detail-section">
+                        <h4>🎯 思想政治和师德师风</h4>
+                        <ul>
+                            <li>思想政治表现良好</li>
+                            <li>师德师风考核合格</li>
+                            <li>年度考核合格</li>
+                            <li>需提交：年度考核表、思想政治考核表、师德师风考核表</li>
+                        </ul>
+                        <h4>🎯 继续教育要求</h4>
+                        <ul>
+                            <li>完成规定学时的继续教育</li>
+                            <li>需提供继续教育审验卡</li>
+                        </ul>
+                        <h4>🎯 资格要求</h4>
+                        <ul>
+                            <li>持有高校教师资格证</li>
+                            <li>提供外语和计算机合格证书</li>
+                            <li>特殊年龄段免试者需提交身份证件</li>
+                        </ul>
+                        <h4>🎯 工作量要求</h4>
+                        <ul>
+                            <li>达到学校规定的教学工作量标准</li>
+                            <li>需提供教学工作量证明</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level assistant">
+                <div class="badge">🎯</div>
+                <div class="level-title">Level 1: 助教</div>
+                <div class="requirements">
+                    <div class="requirement-item">独立承担课程辅导</div>
+                    <div class="requirement-item">完成规定教学任务</div>
+                    <div class="requirement-item">具备基本教科研能力</div>
+                </div>
+                <div class="materials">
+                    <div class="materials-title">📚 所需材料</div>
+                    <div class="material-item">学历学位证明</div>
+                    <div class="material-item">教学工作记录</div>
+                    <div class="material-item">竞赛参与材料</div>
+                </div>
+                <div class="level-details">
+                    <h3>详细要求</h3>
+                    <div class="detail-section">
+                        <h4>🎯 通用要求</h4>
+                        <ul>
+                            <li>思想政治和师德师风考核合格（需提交年度考核表、思想政治考核表、师德师风考核表）</li>
+                            <li>完成继续教育要求学时（需提供审验卡）</li>
+                            <li>持有高校教师资格证</li>
+                            <li>提供外语和计算机合格证书（特殊年龄段免试者需提交身份证件）</li>
+                            <li>达到学校规定的教学工作量标准（需提供证明）</li>
+                        </ul>
+                        <h4>🎯 能力条件</h4>
+                        <ul>
+                            <li>能胜任辅助教学任务，独立承担课程辅导或实验教学</li>
+                            <li>教学态度端正，工作认真负责，完成规定教学任务</li>
+                            <li>具备基本的教科研能力，积极参与课程建设</li>
+                        </ul>
+                        <h4>🏆 业绩条件（学历为本科及以上）</h4>
+                        <ul>
+                            <li>见习期满并考核合格，具备讲师岗位所需的基本教学技能</li>
+                            <li>有校级及以上公开课或教学竞赛参与经历</li>
+                        </ul>
+                        <h4>📝 需要提交材料</h4>
+                        <ul>
+                            <li>学历学位证明及见习期考核结果</li>
+                            <li>辅助教学工作记录（课程、时长）</li>
+                            <li>校级教学竞赛参与材料或公开课记录</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level lecturer">
+                <div class="badge">📚</div>
+                <div class="level-title">Level 2: 讲师</div>
+                <div class="requirements">
+                    <div class="requirement-item">系统讲授2门以上课程</div>
+                    <div class="requirement-item">独立承担教学任务</div>
+                    <div class="requirement-item">发表论文1-2篇</div>
+                </div>
+                <div class="materials">
+                    <div class="materials-title">📚 所需材料</div>
+                    <div class="material-item">论文发表证明</div>
+                    <div class="material-item">教学记录证明</div>
+                    <div class="material-item">课题研究材料</div>
+                </div>
+                <div class="level-details">
+                    <h3>详细要求</h3>
+                    <div class="detail-section">
+                        <h4>🎯 能力条件</h4>
+                        <ul>
+                            <li>系统讲授过2门以上主要课程，教学工作量达到学校规定</li>
+                            <li>教学态度端正，教学效果良好，能独立承担教学任务</li>
+                            <li>积极参与教改或科研活动，取得初步成果</li>
+                        </ul>
+                        <h4>🏆 业绩条件（取得助教资格后）</h4>
+                        <ul>
+                            <li>发表学术论文1-2篇，或公开出版专著、教材</li>
+                            <li>主持或参与校级及以上课题研究</li>
+                            <li>指导学生活动、竞赛并取得一定成绩</li>
+                        </ul>
+                        <h4>📝 需要提交材料</h4>
+                        <ul>
+                            <li>学术论文发表证明或教材出版证明</li>
+                            <li>课程教学记录及学生评教结果</li>
+                            <li>参与课题的证明材料及结题报告</li>
+                            <li>学生竞赛指导材料及获奖证书</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level associate">
+                <div class="badge">🏆</div>
+                <div class="level-title">Level 3: 副教授</div>
+                <div class="requirements">
+                    <div class="requirement-item">主讲2门以上课程</div>
+                    <div class="requirement-item">发表论文2篇</div>
+                    <div class="requirement-item">主持省级课题</div>
+                </div>
+                <div class="materials">
+                    <div class="materials-title">📚 所需材料</div>
+                    <div class="material-item">教学工作量证明</div>
+                    <div class="material-item">论文发表证明</div>
+                    <div class="material-item">项目立项报告</div>
+                </div>
+                <div class="level-details">
+                    <h3>详细要求</h3>
+                    <div class="detail-section">
+                        <h4>🎯 能力条件</h4>
+                        <ul>
+                            <li>主讲过2门以上课程，教学效果良好，学生评教均为"良好"及以上</li>
+                            <li>推进教学改革，发表高水平研究成果，参与专业或课程建设</li>
+                            <li>具备较强科研能力，主持或参与重大科研项目</li>
+                        </ul>
+                        <h4>🏆 业绩条件（取得讲师资格后）</h4>
+                        <ul>
+                            <li>主持或主要参与自治区级课程建设或教学团队建设</li>
+                            <li>发表学术论文2篇（至少1篇教改论文）</li>
+                            <li>主编或副主编正式出版教材1部以上（撰写4万字以上）</li>
+                            <li>主持或参与国家级课题（前5名）或主持自治区级课题1项</li>
+                            <li>获得省部级教学成果奖励，指导学生竞赛获奖</li>
+                        </ul>
+                        <h4>📝 需要提交材料</h4>
+                        <ul>
+                            <li>教学工作量证明（课程名称、学时数、学生评教记录）</li>
+                            <li>教材或论文发表证明（期刊、书籍相关页）</li>
+                            <li>课程或团队建设证明（项目立项书及参与排名材料）</li>
+                            <li>项目立项与结题报告、获奖证书</li>
+                            <li>指导学生竞赛成果证明</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level professor">
+                <div class="badge">👑</div>
+                <div class="level-title">Level 4: 教授</div>
+                <div class="requirements">
+                    <div class="requirement-item">教学经验丰富</div>
+                    <div class="requirement-item">发表论文3篇</div>
+                    <div class="requirement-item">主持国家级课题</div>
+                </div>
+                <div class="materials">
+                    <div class="materials-title">📚 所需材料</div>
+                    <div class="material-item">课程建设材料</div>
+                    <div class="material-item">获奖证书</div>
+                    <div class="material-item">项目证明材料</div>
+                </div>
+                <div class="level-details">
+                    <h3>详细要求</h3>
+                    <div class="detail-section">
+                        <h4>🎯 能力条件</h4>
+                        <ul>
+                            <li>教学经验丰富，教学效果优秀，形成教育理念与教学风格</li>
+                            <li>主讲过1门以上课程，将思想政治教育融入教学，培养学生有成效</li>
+                            <li>推进教学改革，取得高水平教学研究成果或重要奖项</li>
+                        </ul>
+                        <h4>🏆 业绩条件（取得副教授资格后）</h4>
+                        <ul>
+                            <li>主持自治区级及以上课程建设或教学团队建设</li>
+                            <li>发表学术论文3篇（至少1篇教改论文）</li>
+                            <li>出版专著或主编教材1部以上（撰写6万字以上）</li>
+                            <li>主持或参与国家级课题（前3名）或主持自治区级课题1项</li>
+                            <li>获得国家级或省部级教学成果奖励</li>
+                            <li>指导学生参加学科竞赛，获得省级二等奖或以上</li>
+                        </ul>
+                        <h4>📝 需要提交材料</h4>
+                        <ul>
+                            <li>课程建设或团队建设项目材料（立项书、结题报告等）</li>
+                            <li>学术论文发表证明（期刊封面、目录、检索证明）</li>
+                            <li>专著或教材出版证明（封面、版权页、目录、字数声明）</li>
+                            <li>项目立项和结题证明（课题编号、资金到校证明）</li>
+                            <li>获奖证书（教学成果、竞赛指导等）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="pixel-button">开始你的教师之旅！</button>
+    </div>
+
+    <div class="progress-indicator">
+        <div class="progress-dot" data-level="1"></div>
+        <div class="progress-dot" data-level="2"></div>
+        <div class="progress-dot" data-level="3"></div>
+        <div class="progress-dot" data-level="4"></div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.level').forEach(level => {
+            level.addEventListener('mouseenter', () => {
+                level.classList.add('floating');
+            });
+            level.addEventListener('mouseleave', () => {
+                level.classList.remove('floating');
+            });
+        });
+
+        document.querySelectorAll('.level').forEach(level => {
+            level.addEventListener('click', () => {
+                level.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    level.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+
+        document.querySelector('.pixel-button').addEventListener('click', () => {
+            const progress = document.querySelector('.exp-progress');
+            progress.style.width = '0%';
+            setTimeout(() => {
+                progress.style.width = '75%';
+            }, 100);
+        });
+
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            
+            const diameter = Math.max(rect.width, rect.height);
+            const radius = diameter / 2;
+            
+            ripple.style.width = ripple.style.height = `${diameter}px`;
+            ripple.style.left = `${event.clientX - rect.left - radius}px`;
+            ripple.style.top = `${event.clientY - rect.top - radius}px`;
+            
+            ripple.classList.add('ripple');
+            button.appendChild(ripple);
+            
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        }
+
+        document.querySelectorAll('.level').forEach(level => {
+            level.addEventListener('click', (e) => {
+                if (!e.target.closest('.level-details')) {
+                    document.querySelectorAll('.level').forEach(l => {
+                        if (l !== level) l.classList.remove('active');
+                    });
+                    level.classList.toggle('active');
+                    createRipple(e);
+                }
+            });
+        });
+
+        document.querySelectorAll('.progress-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                const level = dot.dataset.level;
+                const targetLevel = document.querySelector(`.level:nth-child(${level})`);
+                targetLevel.scrollIntoView({ behavior: 'smooth' });
+                
+                document.querySelectorAll('.progress-dot').forEach(d => {
+                    d.classList.remove('active');
+                });
+                dot.classList.add('active');
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const levels = document.querySelectorAll('.level');
+            const dots = document.querySelectorAll('.progress-dot');
+            
+            levels.forEach((level, index) => {
+                const rect = level.getBoundingClientRect();
+                if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    dots[index].classList.add('active');
+                }
+            });
+        });
+
+        document.querySelectorAll('.level').forEach(level => {
+            let touchStartY;
+            
+            level.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            level.addEventListener('touchmove', (e) => {
+                const touchY = e.touches[0].clientY;
+                const diff = touchStartY - touchY;
+                
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        level.classList.add('active');
+                    } else {
+                        level.classList.remove('active');
+                    }
+                    touchStartY = touchY;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
