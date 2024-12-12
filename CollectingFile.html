@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>材料上传系统</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --progress-color: linear-gradient(90deg, #FF9A8B 0%, #FF6B95 55%, #FF99AC 100%);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #E3FDF5 0%, #FFE6FA 100%);
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: rainbow 8s linear infinite;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        @keyframes rainbow {
+            0% { color: #ff6b6b; }
+            25% { color: #4ecdc4; }
+            50% { color: #45b7d1; }
+            75% { color: #96c93d; }
+            100% { color: #ff6b6b; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #eee;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--progress-color);
+            background-size: 200% 100%;
+            animation: gradientMove 3s linear infinite;
+            transform: skewX(-15deg);
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 100% 0%; }
+            100% { background-position: -100% 0%; }
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .achievement {
+            position: fixed;
+            top: 20px;
+            right: -300px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: glow 2s infinite alternate;
+            z-index: 1000;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #FFD700; }
+            to { box-shadow: 0 0 20px #FFA500; }
+        }
+
+        .upload-item {
+            position: relative;
+            overflow: hidden;
+            margin: 15px 0;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .upload-item:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border-color: #ff69b4;
+        }
+
+        .upload-item.completed {
+            border-color: #00ff88;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            animation: pulse 2s infinite;
+        }
+
+        .upload-item.completed label::after {
+            content: " ✅";
+            animation: bounce 1s infinite;
+        }
+
+        .check-button {
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #FF512F, #FF9A8B);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .check-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+
+        .check-button:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .check-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(255, 105, 180, 0.3);
+            letter-spacing: 3px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+        #userInfoForm {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .email-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            display: none;
+        }
+        .email-info h3 {
+            margin: 0;
+            color: #2e7d32;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>材料上传系统</h1>
+    
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">完成进度: 0/7</div>
+    </div>
+
+    <div class="achievement" id="achievement">
+        <h3>🏆 解锁成就！</h3>
+        <p id="achievementText"></p>
+    </div>
+
+    <div class="upload-container">
+        <div class="upload-item">
+            <label>���位实习审批表</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="岗位实习审批表">
+            <div class="error"></div>
+        </div>
+        <div class="upload-item">
+            <label>三方协议</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="三方协议">
+            <div class="error"></div>
+        </div>
+        <div class="upload-item">
+            <label>公司营业执照</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="公司营业执照">
+            <div class="error"></div>
+        </div>
+        <div class="upload-item">
+            <label>工作证明</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="工作证明">
+            <div class="error"></div>
+        </div>
+        <div class="upload-item">
+            <label>家长知情同意书</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="家长知情同意书">
+            <div class="error"></div>
+        </div>
+        <div class="upload-item">
+            <label>安全承诺书</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="安全承诺书">
+            <div class="error"></div>
+        </div>
+        <div class="upload-item">
+            <label>保险证明</label>
+            <input type="file" accept=".pdf" data-required="true" data-name="保险证明">
+            <div class="error"></div>
+        </div>
+    </div>
+
+    <button class="check-button" onclick="checkFiles()">检查文件</button>
+
+    <div id="userInfoForm" class="hidden">
+        <h2>请输入个人信息</h2>
+        <div class="form-group">
+            <label>姓名：</label>
+            <input type="text" id="userName" required>
+        </div>
+        <div class="form-group">
+            <label>学号：</label>
+            <input type="text" id="studentId" required>
+        </div>
+        <button class="check-button" onclick="submitForm()">确认提交</button>
+    </div>
+
+    <div id="emailInfo" class="email-info">
+        <h3>请将下载的压缩包发送至邮箱：xxx@qq.com</h3>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script>
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const uploadItem = e.target.closest('.upload-item');
+                uploadItem.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    uploadItem.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+
+        function createConfetti() {
+            const colors = ['#ff69b4', '#00ff88', '#ff6b6b', '#4ecdc4', '#45b7d1'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        function showAchievement(text) {
+            const achievement = document.getElementById('achievement');
+            document.getElementById('achievementText').textContent = text;
+            achievement.style.animation = 'glow 2s infinite alternate';
+            achievement.style.right = '20px';
+            createConfetti();
+            setTimeout(() => {
+                achievement.style.right = '-300px';
+            }, 3000);
+        }
+
+        function updateProgress() {
+            const totalFiles = 7;
+            const completedFiles = document.querySelectorAll('.upload-item.completed').length;
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const progress = (completedFiles / totalFiles) * 100;
+            
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `完成进度: ${completedFiles}/${totalFiles}`;
+
+            if (completedFiles === 1) {
+                showAchievement("🌟 解锁成就：初次上传 - 勇者的冒险开始了！");
+            } else if (completedFiles === 3) {
+                showAchievement("⚡ 解锁成就：进度之星 - 已完成一半路程，继续冲刺！");
+            } else if (completedFiles === totalFiles) {
+                showAchievement("🎮 解锁成就：完美通关 - 恭喜你成为上传大师！");
+            }
+        }
+
+        function checkFiles() {
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            let hasError = false;
+            
+            fileInputs.forEach(input => {
+                const errorDiv = input.nextElementSibling;
+                errorDiv.textContent = '';
+                const uploadItem = input.closest('.upload-item');
+                
+                if (!input.files || input.files.length === 0) {
+                    errorDiv.textContent = `请上传${input.dataset.name}`;
+                    hasError = true;
+                    uploadItem.classList.remove('completed');
+                    return;
+                }
+                
+                const file = input.files[0];
+                const expectedFileName = `${input.dataset.name}.pdf`;
+                if (file.name !== expectedFileName) {
+                    errorDiv.textContent = `文件名必须为：${expectedFileName}`;
+                    hasError = true;
+                    return;
+                }
+                
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    errorDiv.textContent = `${input.dataset.name}必须是PDF格式`;
+                    hasError = true;
+                    return;
+                }
+                uploadItem.classList.add('completed');
+            });
+
+            updateProgress();
+
+            if (!hasError) {
+                document.getElementById('userInfoForm').classList.remove('hidden');
+                showAchievement("🌈 完美准备 - 可以提交个人信息了！");
+            } else {
+                document.getElementById('userInfoForm').classList.add('hidden');
+                document.getElementById('emailInfo').style.display = 'none';
+            }
+        }
+
+        async function submitForm() {
+            const userName = document.getElementById('userName').value.trim();
+            const studentId = document.getElementById('studentId').value.trim();
+            
+            if (!userName || !studentId) {
+                alert('请填写姓名和学号！');
+                return;
+            }
+
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            const zip = new JSZip();
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            
+            try {
+                for (const input of fileInputs) {
+                    const file = input.files[0];
+                    if (file) {
+                        zip.file(`${input.dataset.name}.pdf`, file);
+                    }
+                }
+
+                const content = await zip.generateAsync({type: "blob"});
+                const zipFileName = `${userName}_${studentId}_材料.zip`;
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = zipFileName;
+                link.click();
+                
+                document.getElementById('emailInfo').style.display = 'block';
+                showAchievement("🎉 任务完成 - 文件已处理！");
+                
+            } catch (error) {
+                console.error(error);
+            } finally {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 
