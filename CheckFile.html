@@ -430,11 +430,25 @@
                     const resultItem = document.createElement('div');
                     resultItem.className = 'result-item';
 
-                    if (uploadedFiles.has(fileName)) {
-                        resultItem.classList.add('success');
-                        resultItem.textContent = `✅ ${fileName} - 完美匹配！`;
-                        matchCount++;
-                    } else {
+                    // 获取文件名的核心部分（不含扩展名）和扩展名
+                    const [checklistBaseName, checklistExt] = getFileNameParts(fileName);
+                    
+                    // 检查是否有匹配的文件
+                    let found = false;
+                    for (let uploadedFile of uploadedFiles) {
+                        const [uploadedBaseName, uploadedExt] = getFileNameParts(uploadedFile);
+                        
+                        // 检查文件名是否包含核心部分，扩展名是否相似
+                        if (isFileMatch(checklistBaseName, checklistExt, uploadedBaseName, uploadedExt)) {
+                            resultItem.classList.add('success');
+                            resultItem.textContent = `✅ ${fileName} - 已找到匹配文件：${uploadedFile}`;
+                            matchCount++;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
                         resultItem.classList.add('error');
                         resultItem.textContent = `❌ ${fileName} - 未找到文件`;
                     }
@@ -453,18 +467,96 @@
                     }
                 }, index * 500);
             });
+        }
 
-            // 检查上传的多余文件
-            uploadedFiles.forEach(fileName => {
-                if (!checklist.includes(fileName)) {
-                    setTimeout(() => {
-                        const resultItem = document.createElement('div');
-                        resultItem.className = 'result-item warning';
-                        resultItem.textContent = `⚠️ ${fileName} - 额外的文件`;
-                        results.appendChild(resultItem);
-                    }, checklist.length * 500);
+        // 获取文件名的核心部分和扩展名
+        function getFileNameParts(fileName) {
+            const lastDotIndex = fileName.lastIndexOf('.');
+            if (lastDotIndex === -1) {
+                return [fileName.toLowerCase(), ''];
+            }
+            const baseName = fileName.substring(0, lastDotIndex).toLowerCase();
+            const ext = fileName.substring(lastDotIndex + 1).toLowerCase();
+            return [baseName, ext];
+        }
+
+        // 提取文件名中的关键词
+        function extractKeywords(fileName) {
+            // 移除常见的分隔符，将文件名分割成关键词
+            const keywords = fileName
+                .replace(/[_\-\.]/g, ' ')  // 替换下划线、横线、点号为空格
+                .split(' ')
+                .filter(word => word.length > 1);  // 过滤掉单字符的词
+
+            // 定义文档类型及其变体
+            const documentTypes = {
+                '营业执照': ['营业执照', '执照'],
+                '身份证': ['身份证', '身份证明'],
+                '知情同意书': ['知情同意书', '同意书'],
+                '申请表': ['申请表', '申请书'],
+                '保险': ['保险', '保险单', '保险证明', '保单'],
+                '证明': ['证明', '证明书'],
+                '承诺书': ['承诺书', '承诺'],
+                '声明': ['声明', '声明书'],
+                '协议': ['协议', '协议书'],
+                '合同': ['合同', '合同书']
+            };
+
+            // 查找文件名中包含的所有文档类型关键词
+            let foundTypes = [];
+            for (const [mainType, variants] of Object.entries(documentTypes)) {
+                if (variants.some(variant => fileName.includes(variant))) {
+                    // 如果找到任何变体，添加主类型
+                    foundTypes.push(mainType);
+                    // 同时添加找到的具体变体
+                    foundTypes.push(...variants.filter(variant => fileName.includes(variant)));
                 }
+            }
+
+            return [...new Set([...keywords, ...foundTypes])]; // 使用 Set 去重
+        }
+
+        // 检查文件是否匹配
+        function isFileMatch(checklistBaseName, checklistExt, uploadedBaseName, uploadedExt) {
+            // 检查扩展名是否相似
+            const isExtMatch = checklistExt === '' || 
+                              uploadedExt === checklistExt ||
+                              (checklistExt === 'doc' && uploadedExt === 'docx') ||
+                              (checklistExt === 'docx' && uploadedExt === 'doc');
+
+            // 提取文件名中的关键词
+            const checklistKeywords = extractKeywords(checklistBaseName);
+            const uploadedKeywords = extractKeywords(uploadedBaseName);
+
+            // 检查关键词是否匹配
+            const isNameMatch = checklistKeywords.some(keyword => {
+                return uploadedKeywords.some(uploadedKeyword => {
+                    // 完全匹配
+                    if (keyword === uploadedKeyword) return true;
+                    // 包含关系匹配
+                    if (keyword.includes(uploadedKeyword) || uploadedKeyword.includes(keyword)) return true;
+                    // 检查是否为同一文档类型的变体
+                    return isVariantMatch(keyword, uploadedKeyword);
+                });
             });
+
+            return isExtMatch && isNameMatch;
+        }
+
+        // 检查两个关键词是否为同一文档类型的变体
+        function isVariantMatch(keyword1, keyword2) {
+            const documentTypes = {
+                '保险': ['保险', '保险单', '保险证明', '保单'],
+                '证明': ['证明', '证明书'],
+                // ... 其他文档类型的变体映射可以根据需要添加
+            };
+
+            for (const variants of Object.values(documentTypes)) {
+                if (variants.includes(keyword1) && variants.includes(keyword2)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // 拖放处理
