@@ -73,7 +73,7 @@
             opacity: 0.7;
         }
 
-        button {
+        .copy-btn {
             display: block;
             width: 100%;
             padding: 15px;
@@ -87,7 +87,7 @@
             margin-top: 30px;
         }
 
-        button:hover {
+        .copy-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
@@ -98,39 +98,6 @@
             border-radius: 10px;
             background: #f8f9fa;
             display: none;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #ddd;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .progress {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(45deg, #6e8efb, #a777e3);
-            transition: width 0.5s;
-        }
-
-        .sparkle {
-            position: absolute;
-            pointer-events: none;
-            animation: sparkle 1s forwards;
-        }
-
-        @keyframes sparkle {
-            0% {
-                transform: scale(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1) rotate(180deg);
-                opacity: 0;
-            }
         }
 
         .deadline-warning {
@@ -155,14 +122,65 @@
                 transform: scale(1);
             }
         }
+
+        /* 添加响应式布局样式 */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            input, textarea {
+                font-size: 16px; /* 防止 iOS 自动缩放 */
+            }
+
+            .input-group {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* 添加预览区域样式 */
+        .preview-container {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed #6e8efb;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .preview-title {
+            color: #4a4a4a;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* 添加复制成功提示样式 */
+        .copy-success {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            animation: fadeOut 1.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>✨ 趣味通知生成器 ✨</h1>
-        <div class="progress-bar">
-            <div class="progress" id="progress"></div>
-        </div>
         
         <div class="input-group">
             <label for="title">通知标题</label>
@@ -212,37 +230,52 @@
             <span class="emoji-label">📋</span>
         </div>
 
-        <button onclick="generateNotification()">✨ 生成通知 ✨</button>
+        <button onclick="copyNotification()" class="copy-btn">📋 一键复制通知 📋</button>
 
         <div id="result"></div>
     </div>
 
     <script>
-        function generateNotification() {
-            // 进度条动画
-            let progress = 0;
-            const progressBar = document.getElementById('progress');
-            const interval = setInterval(() => {
-                progress += 2;
-                progressBar.style.width = progress + '%';
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    showResult();
-                }
-            }, 20);
+        // 实时预览功能
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                showResult();
+            });
+        });
 
-            // 添加闪光效果
-            document.addEventListener('mousemove', createSparkle);
-        }
+        function copyNotification() {
+            const result = document.getElementById('result');
+            if (!result.innerHTML) {
+                showResult();
+            }
 
-        function createSparkle(e) {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.innerHTML = '✨';
-            sparkle.style.left = e.pageX + 'px';
-            sparkle.style.top = e.pageY + 'px';
-            document.body.appendChild(sparkle);
-            setTimeout(() => sparkle.remove(), 1000);
+            // 创建临时文本区域
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = result.innerText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                // 执行复制命令
+                document.execCommand('copy');
+                
+                // 显示复制成功提示
+                const successMessage = document.createElement('div');
+                successMessage.className = 'copy-success';
+                successMessage.textContent = '✅ 复制成功！';
+                document.body.appendChild(successMessage);
+                
+                // 1.5秒后移除提示
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 1500);
+            } catch (err) {
+                alert('复制失败，请手动复制');
+            }
+            
+            // 移除临时文本区域
+            document.body.removeChild(tempTextArea);
         }
 
         function showResult() {
