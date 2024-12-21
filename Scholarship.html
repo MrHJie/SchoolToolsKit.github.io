@@ -398,9 +398,15 @@
             <div class="warning-title">⚠️ 取消资格情形</div>
             <ul>
                 <li>任何课程挂科</li>
-                <li>受到纪律处分</li>
-                <li>课程缺考</li>
-                <li>未完成规定的志愿服务时长</li>
+                <li>受违纪、行政纪律处分者</li>
+                <li>煽动闹事，扰乱社会和学校教学、生活秩序者</li>
+                <li>有抽烟、酗酒等不文明行为者</li>
+                <li>考试作弊者</li>
+                <li>学生所在寝室在本学期内因卫生或其它违纪行为被学校通报批评者</li>
+                <li>学生在休学期间不享受奖学金</li>
+                <li>体育成绩未达标者</li>
+                <li>选修课不及格者</li>
+                <li>参加各种非法组织者</li>
             </ul>
         </div>
     </div>
@@ -432,7 +438,7 @@
             // 更新显示
             document.getElementById('totalScore').textContent = totalScore.toFixed(2);
 
-            // 检查是否有不���格课程
+            // 检查是否有不及格课程
             const hasFailingScore = scores.some(score => score > 0 && score < 60);
             if (hasFailingScore) {
                 showWarning('警告：存在不及格课程，将失去评选资格！');
