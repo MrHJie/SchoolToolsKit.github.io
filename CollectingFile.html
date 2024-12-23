@@ -6,26 +6,33 @@
     <title>材料上传系统</title>
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --progress-color: linear-gradient(90deg, #FF9A8B 0%, #FF6B95 55%, #FF99AC 100%);
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --background-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-background: rgba(255, 255, 255, 0.95);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #E3FDF5 0%, #FFE6FA 100%);
+            background: var(--background-gradient);
             min-height: 100vh;
+            color: #2d3436;
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--primary-color);
+            font-size: 2.8em;
+            margin-bottom: 40px;
+            font-weight: 700;
+            letter-spacing: -1px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            animation: rainbow 8s linear infinite;
-            font-size: 2.5em;
-            margin-bottom: 30px;
         }
 
         @keyframes rainbow {
@@ -44,49 +51,6 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
-        }
-
-        .progress-container {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 25px;
-            background: #eee;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--progress-color);
-            background-size: 200% 100%;
-            animation: gradientMove 3s linear infinite;
-            transform: skewX(-15deg);
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 100% 0%; }
-            100% { background-position: -100% 0%; }
-        }
-
-        .progress-text {
-            text-align: center;
-            margin-top: 5px;
-            font-weight: bold;
-            color: #666;
         }
 
         .achievement {
@@ -377,11 +341,6 @@
                 font-size: 16px; /* 防止iOS自动放大输入框 */
             }
 
-            /* 优化进度条容器在移动端的显示 */
-            .progress-container {
-                margin-top: 10px;
-            }
-
             /* 优化上传项在移动端的显示 */
             .upload-item {
                 margin: 10px 0;
@@ -454,13 +413,6 @@
 <body>
     <h1>材料上传系统</h1>
     
-    <div class="progress-container">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressBar"></div>
-        </div>
-        <div class="progress-text" id="progressText">完成进度: 0/7</div>
-    </div>
-
     <div class="achievement" id="achievement">
         <h3>🏆 解锁成就！</h3>
         <p id="achievementText"></p>
@@ -585,13 +537,7 @@
         function updateProgress() {
             const totalFiles = 7;
             const completedFiles = document.querySelectorAll('.upload-item.completed').length;
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            const progress = (completedFiles / totalFiles) * 100;
             
-            progressBar.style.width = `${progress}%`;
-            progressText.textContent = `完成进度: ${completedFiles}/${totalFiles}`;
-
             if (completedFiles === totalFiles) {
                 updateProgressNav(2);
             } else {
@@ -702,7 +648,7 @@
                 link.click();
                 
                 document.getElementById('emailInfo').style.display = 'block';
-                showAchievement("🎉 任务完成 - 文件已处理！");
+                showAchievement("🎉 任务完成 - 文件已处理");
                 document.getElementById('emailInfo').scrollIntoView({ 
                     behavior: 'smooth',
                     block: 'center'
