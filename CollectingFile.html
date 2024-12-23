@@ -184,12 +184,16 @@
         }
         .hidden {
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
         #userInfoForm {
             margin-top: 20px;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
         }
         .form-group {
             margin-bottom: 15px;
@@ -208,6 +212,8 @@
             border: 1px solid #4CAF50;
             border-radius: 4px;
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
         .email-info h3 {
             margin: 0;
@@ -251,6 +257,71 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        /* 当元素显示时的样式 */
+        #userInfoForm:not(.hidden),
+        .email-info[style*="display: block"] {
+            opacity: 1;
+        }
+
+        /* 添加导航栏样式 */
+        .progress-nav {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            opacity: 1;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .step-number {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .progress-step.completed .step-number {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-text {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .progress-nav {
+                display: none; /* 在移动设备上隐藏 */
+            }
         }
     </style>
 </head>
@@ -330,6 +401,25 @@
         <div class="loading-spinner"></div>
     </div>
 
+    <div class="progress-nav">
+        <div class="progress-step active" id="step1">
+            <div class="step-number">1</div>
+            <div class="step-text">上传文件</div>
+        </div>
+        <div class="progress-step" id="step2">
+            <div class="step-number">2</div>
+            <div class="step-text">填写信息</div>
+        </div>
+        <div class="progress-step" id="step3">
+            <div class="step-number">3</div>
+            <div class="step-text">打包下载</div>
+        </div>
+        <div class="progress-step" id="step4">
+            <div class="step-number">4</div>
+            <div class="step-text">完成提交</div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script>
         document.querySelectorAll('input[type="file"]').forEach(input => {
@@ -376,13 +466,34 @@
             progressBar.style.width = `${progress}%`;
             progressText.textContent = `完成进度: ${completedFiles}/${totalFiles}`;
 
+            if (completedFiles === totalFiles) {
+                updateProgressNav(2);
+            } else {
+                updateProgressNav(1);
+            }
+
             if (completedFiles === 1) {
-                showAchievement("🌟 解锁成就：初次上传 - 勇者的冒险开始了！");
+                showAchievement("🎉 解锁成就：初次上传 - 勇者的冒险开始了！");
             } else if (completedFiles === 3) {
                 showAchievement("⚡ 解锁成就：进度之星 - 已完成一半路程，继续冲刺！");
             } else if (completedFiles === totalFiles) {
                 showAchievement("🎮 解锁成就：完美通关 - 恭喜你成为上传大师！");
             }
+        }
+
+        function updateProgressNav(step) {
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach((s, index) => {
+                if (index + 1 < step) {
+                    s.classList.add('completed');
+                    s.classList.remove('active');
+                } else if (index + 1 === step) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                } else {
+                    s.classList.remove('active', 'completed');
+                }
+            });
         }
 
         function checkFiles() {
@@ -422,6 +533,10 @@
             if (!hasError) {
                 document.getElementById('userInfoForm').classList.remove('hidden');
                 showAchievement("🌈 完美准备 - 可以提交个人信息了！");
+                document.getElementById('userInfoForm').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
             } else {
                 document.getElementById('userInfoForm').classList.add('hidden');
                 document.getElementById('emailInfo').style.display = 'none';
@@ -436,6 +551,8 @@
                 alert('请填写姓名和学号！');
                 return;
             }
+
+            updateProgressNav(3);
 
             document.getElementById('loadingOverlay').style.display = 'flex';
 
@@ -460,12 +577,22 @@
                 
                 document.getElementById('emailInfo').style.display = 'block';
                 showAchievement("🎉 任务完成 - 文件已处理！");
+                document.getElementById('emailInfo').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                updateProgressNav(4);
                 
             } catch (error) {
                 console.error(error);
+                updateProgressNav(3);
             } finally {
                 document.getElementById('loadingOverlay').style.display = 'none';
             }
+        }
+
+        window.onload = function() {
+            updateProgressNav(1);
         }
     </script>
 </body>
