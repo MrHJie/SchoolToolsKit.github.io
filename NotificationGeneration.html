@@ -435,7 +435,7 @@
                     { id: "attendees", label: "参会人员", type: "textarea", placeholder: "请输入参会人员名单", emoji: "👥" },
                     { id: "agenda", label: "会议议程", type: "textarea", placeholder: "请输入会议议程", emoji: "📝" }
                 ],
-                reminder: "⚠️ 请务必准时参会，如有特殊情况请提前告知！"
+                reminder: "⚠️ 请务必按时参会，如有特殊情况请提前告知！"
             },
             activity: {
                 title: "活动报名通知",
@@ -448,7 +448,7 @@
                     { id: "startTime", label: "开始时间", type: "datetime-local", emoji: "🕐" },
                     { id: "endTime", label: "结束时间", type: "datetime-local", emoji: "🕒" },
                     { id: "location", label: "活动地点", type: "text", placeholder: "请输入活动地点", emoji: "📍" },
-                    { id: "registrationMethod", label: "报名方式", type: "textarea", placeholder: "请输入报名方式", emoji: "✍️" }
+                    { id: "registrationMethod", label: "报名方式", type: "textarea", placeholder: "请输入报名��式", emoji: "✍️" }
                 ],
                 reminder: "⚠️ 报名后请保持联系方式畅通，以便接收活动通知！"
             },
@@ -490,7 +490,7 @@
                     { id: "paperSubmission", label: "纸质材料要求", type: "textarea", placeholder: "请输入纸质材料提交要求", emoji: "📄" },
                     { id: "digitalSubmission", label: "电子材料要求", type: "textarea", placeholder: "请输入电子材料提交要求", emoji: "💻" },
                     { id: "process", label: "评选流程", type: "textarea", placeholder: "请输入评选流程", emoji: "🔄" },
-                    { id: "schedule", label: "时间安排", type: "textarea", placeholder: "请输入评选时间安排", emoji: "📅" }
+                    { id: "schedule", label: "时间安排", type: "textarea", placeholder: "请输入评选时��安排", emoji: "📅" }
                 ],
                 reminder: "⚠️ 请确保材料真实有效，评选结果将不受理任何异议！"
             },
@@ -537,7 +537,7 @@
                     { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
                     { id: "scope", label: "检查范围", type: "textarea", placeholder: "请输入设备或区域范围", emoji: "🔍" },
                     { id: "time", label: "检查时间", type: "datetime-local", emoji: "🕐" },
-                    { id: "purpose", label: "检查目的", type: "textarea", placeholder: "请输入安全隐患排查等目的", emoji: "🎯" },
+                    { id: "purpose", label: "检查目的", type: "textarea", placeholder: "请输入安全隐患检查等目的", emoji: "🎯" },
                     { id: "requirements", label: "配合要求", type: "textarea", placeholder: "请输入需要配合的事项", emoji: "📋" }
                 ],
                 reminder: "⚠️ 检查期间可能会影响正常使用，请配合相关工作！"
@@ -628,7 +628,7 @@
             });
             generateNotification();
             
-            // 清除本地存储
+            // 清除��地存储
             const templateSelect = document.getElementById('templateSelect');
             localStorage.removeItem(`notificationData_${templateSelect.value}`);
         }
@@ -649,11 +649,18 @@
                     if (!element) return;
 
                     const value = element.value || '';
-                    if (field.type === 'datetime-local' && value) {
+                    if (field.id === 'greeting') {
+                        // 对于称呼字段特殊处理
+                        notificationContent += `<p>${value}</p>`;
+                    } else if (field.type === 'datetime-local' && value) {
                         const date = new Date(value);
                         if (!isNaN(date.getTime())) {
                             notificationContent += `<p>${field.emoji} ${field.label}：${date.toLocaleString()}</p>`;
                         }
+                    } else if (field.type === 'textarea') {
+                        // 对于文本域内容，保持换行格式
+                        const formattedValue = value.split('\n').map(line => line.trim()).filter(line => line).join('</p><p>');
+                        notificationContent += `<p>${field.emoji} ${field.label}：</p><p>${formattedValue}</p>`;
                     } else {
                         notificationContent += `<p>${field.emoji} ${field.label}：${value}</p>`;
                     }
@@ -666,8 +673,6 @@
                         </div>
                     `;
                 }
-
-                notificationContent += '<p>🌈 期待您的参与！</p>';
 
                 const result = document.getElementById('result');
                 result.innerHTML = notificationContent;
@@ -763,26 +768,25 @@
             const result = document.getElementById('result');
             const title = document.getElementById('title').value;
             const greeting = document.getElementById('greeting').value;
-            const content = document.getElementById('content').value;
+            const content = document.getElementById('content').value.split('\n').map(line => line.trim()).filter(line => line).join('</p><p>');
             const location = document.getElementById('location').value;
             const startTime = new Date(document.getElementById('startTime').value).toLocaleString();
             const endTime = new Date(document.getElementById('endTime').value).toLocaleString();
-            const digitalSubmission = document.getElementById('digitalSubmission').value;
-            const paperSubmission = document.getElementById('paperSubmission').value;
+            const digitalSubmission = document.getElementById('digitalSubmission').value.split('\n').map(line => line.trim()).filter(line => line).join('</p><p>');
+            const paperSubmission = document.getElementById('paperSubmission').value.split('\n').map(line => line.trim()).filter(line => line).join('</p><p>');
 
             result.innerHTML = `
                 <h2>🌟 ${title} 🌟</h2>
-                <p>${greeting}：</p>
+                <p>${greeting}</p>
                 <p>${content}</p>
                 <p>📍 活动地点：${location}</p>
                 <p>⏰ 开始时间：${startTime}</p>
                 <p>⌛ 结束时间：${endTime}</p>
-                <p>💻 电子版材料提交：${digitalSubmission}</p>
-                <p>📋 纸质版材料提交：${paperSubmission}</p>
+                <p>💻 电子版材料提交：</p><p>${digitalSubmission}</p>
+                <p>📋 纸质版材料提交：</p><p>${paperSubmission}</p>
                 <div class="deadline-warning">
                     ⚠️ 特别提醒：超过截止时间不再接受任何形式的报名和材料提交，请合理安排时间！
                 </div>
-                <p>🌈 期待您的参与！</p>
             `;
             result.style.display = 'block';
         }
