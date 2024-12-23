@@ -265,7 +265,7 @@
             opacity: 1;
         }
 
-        /* 添加导航栏样式 */
+        /* 修改导航栏样式 */
         .progress-nav {
             position: fixed;
             right: 30px;
@@ -276,6 +276,7 @@
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .progress-step {
@@ -318,10 +319,135 @@
             white-space: nowrap;
         }
 
+        /* 修改媒体查询部分 */
         @media (max-width: 768px) {
             .progress-nav {
-                display: none; /* 在移动设备上隐藏 */
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                transform: none;
+                display: flex;
+                justify-content: space-around;
+                padding: 10px;
+                border-radius: 0;
+                border-bottom: 1px solid rgba(0,0,0,0.1);
+                background: rgba(255, 255, 255, 0.95);
             }
+
+            .progress-step {
+                margin: 0;
+                flex-direction: column;
+                align-items: center;
+                font-size: 12px;
+            }
+
+            .step-number {
+                width: 24px;
+                height: 24px;
+                margin-right: 0;
+                margin-bottom: 4px;
+                font-size: 12px;
+            }
+
+            .step-text {
+                font-size: 12px;
+            }
+
+            /* 调整主体内容，防止被固定导航栏遮挡 */
+            body {
+                padding-top: 80px;
+            }
+
+            /* 调整成就提示的位置 */
+            .achievement {
+                top: 80px;
+            }
+
+            /* 优化按钮在移动端的显示 */
+            .check-button {
+                width: 100%;
+                max-width: 300px;
+                margin: 20px auto;
+                display: block;
+            }
+
+            /* 优化表单在移动端的显示 */
+            .form-group input {
+                font-size: 16px; /* 防止iOS自动放大输入框 */
+            }
+
+            /* 优化进度条容器在移动端的显示 */
+            .progress-container {
+                margin-top: 10px;
+            }
+
+            /* 优化上传项在移动端的显示 */
+            .upload-item {
+                margin: 10px 0;
+                padding: 12px;
+            }
+
+            /* 优化标题在移动端的显示 */
+            h1 {
+                font-size: 1.8em;
+                margin-top: 0;
+            }
+
+            /* 优化加载遮罩在移动端的显示 */
+            .loading-overlay {
+                padding-top: 80px;
+            }
+        }
+
+        /* 添加连接线效果 */
+        @media (min-width: 769px) {
+            .progress-step:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                right: -20px;
+                top: 50%;
+                width: 40px;
+                height: 2px;
+                background: #ddd;
+                transform: translateY(-50%);
+            }
+
+            .progress-step.completed::after {
+                background: #4CAF50;
+            }
+
+            .progress-step {
+                position: relative;
+                margin: 25px 0;
+            }
+        }
+
+        /* 添加过渡动画 */
+        .progress-step {
+            transition: all 0.3s ease;
+        }
+
+        .step-number {
+            transition: all 0.3s ease;
+        }
+
+        /* 添加完成标记 */
+        .progress-step.completed .step-number::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+        }
+
+        /* 添加激活状态的动画效果 */
+        .progress-step.active .step-number {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
