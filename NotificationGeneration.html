@@ -201,7 +201,7 @@
             }
         }
 
-        /* 添加中等屏幕的适配 */
+        /* 添加中等屏幕的 */
         @media screen and (min-width: 769px) and (max-width: 1024px) {
             .container {
                 max-width: 90%;
@@ -246,6 +246,111 @@
             70% { opacity: 1; }
             100% { opacity: 0; }
         }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: white;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        select:focus {
+            border-color: #6e8efb;
+            box-shadow: 0 0 10px rgba(110, 142, 251, 0.3);
+            outline: none;
+        }
+
+        /* 添加错误提示样式 */
+        .invalid {
+            border-color: #ff4757 !important;
+            animation: shake 0.5s;
+        }
+
+        .error-message {
+            color: #ff4757;
+            font-size: 0.9em;
+            margin-top: 5px;
+            padding-left: 5px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* 添加提示框样式 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: rgba(46, 204, 113, 0.9);
+        }
+
+        .toast.error {
+            background: rgba(255, 71, 87, 0.9);
+        }
+
+        .toast.info {
+            background: rgba(52, 152, 219, 0.9);
+        }
+
+        /* 优化输入框焦点效果 */
+        input:focus, textarea:focus, select:focus {
+            border-color: #6e8efb;
+            box-shadow: 0 0 10px rgba(110, 142, 251, 0.3);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        /* 添加输入框过渡效果 */
+        input, textarea, select {
+            transition: all 0.3s ease;
+        }
+
+        /* 优化按钮悬停效果 */
+        .copy-btn:hover, .clear-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 添加响应式调整 */
+        @media screen and (max-width: 768px) {
+            .toast {
+                width: 90%;
+                text-align: center;
+            }
+
+            .error-message {
+                font-size: 0.8em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -253,51 +358,25 @@
         <h1>✨ 趣味通知生成器 ✨</h1>
         
         <div class="input-group">
-            <label for="title">通知标题</label>
-            <input type="text" id="title" placeholder="请输入通知标题" required>
-            <span class="emoji-label">📢</span>
+            <label for="templateSelect">选择通知模板</label>
+            <select id="templateSelect" onchange="changeTemplate()">
+                <option value="custom">自定义通知</option>
+                <option value="material">材料提交通知</option>
+                <option value="meeting">会议通知</option>
+                <option value="activity">活动报名通知</option>
+                <option value="competition">竞赛通知</option>
+                <option value="course">课程安排通知</option>
+                <option value="evaluation">评选通知</option>
+                <option value="payment">缴费通知</option>
+                <option value="adjustment">调整通知</option>
+                <option value="review">评审通知</option>
+                <option value="safety">安全检查通知</option>
+            </select>
+            <span class="emoji-label">📑</span>
         </div>
 
-        <div class="input-group">
-            <label for="greeting">称呼</label>
-            <input type="text" id="greeting" placeholder="请输入称呼" required>
-            <span class="emoji-label">👋</span>
-        </div>
-
-        <div class="input-group">
-            <label for="content">通知内容</label>
-            <textarea id="content" rows="4" placeholder="请输入通知内容" required></textarea>
-            <span class="emoji-label">📝</span>
-        </div>
-
-        <div class="input-group">
-            <label for="location">地点</label>
-            <input type="text" id="location" placeholder="请输入地点" required>
-            <span class="emoji-label">📍</span>
-        </div>
-
-        <div class="input-group">
-            <label for="startTime">开始时间</label>
-            <input type="datetime-local" id="startTime" required>
-            <span class="emoji-label">🕐</span>
-        </div>
-
-        <div class="input-group">
-            <label for="endTime">结束时间</label>
-            <input type="datetime-local" id="endTime" required>
-            <span class="emoji-label">🕒</span>
-        </div>
-
-        <div class="input-group">
-            <label for="digitalSubmission">电子版材料提交要求</label>
-            <textarea id="digitalSubmission" rows="3" placeholder="请输入电子版材料提交要求"></textarea>
-            <span class="emoji-label">💻</span>
-        </div>
-
-        <div class="input-group">
-            <label for="paperSubmission">纸质版材料提交要求</label>
-            <textarea id="paperSubmission" rows="3" placeholder="请输入纸质版材料提交要求"></textarea>
-            <span class="emoji-label">📋</span>
+        <div id="templateFields">
+            <!-- 动态生成的模板字段将在这里显示 -->
         </div>
 
         <button onclick="copyNotification()" class="copy-btn">📋 一键复制通知 📋</button>
@@ -314,12 +393,341 @@
             });
         });
 
-        function copyNotification() {
-            const result = document.getElementById('result');
-            if (!result.innerHTML) {
-                showResult();
+        // 定义模板配置
+        const templates = {
+            custom: {
+                title: "自定义通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入通知标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "content", label: "通知内容", type: "textarea", placeholder: "请输入通知内容", emoji: "📝" },
+                    { id: "location", label: "地点", type: "text", placeholder: "请输入地点", emoji: "📍" },
+                    { id: "startTime", label: "开始时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "endTime", label: "结束时间", type: "datetime-local", emoji: "🕒" },
+                    { id: "digitalSubmission", label: "电子版材料提交要求", type: "textarea", placeholder: "请输入电子版材料提交要求", emoji: "💻" },
+                    { id: "paperSubmission", label: "纸质版材料提交要求", type: "textarea", placeholder: "请输入纸质版材料提交要求", emoji: "📋" }
+                ],
+                reminder: "⚠️ 特别提醒：超过截止时间将不再接受任何形式的报名和材料提交，请合理安排时间！"
+            },
+            material: {
+                title: "材料提交通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入通知标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "materialList", label: "提交材料清单", type: "textarea", placeholder: "请列出需要提交的材料清单", emoji: "📝" },
+                    { id: "requirements", label: "提交要求", type: "textarea", placeholder: "请输入格式、装订等要求", emoji: "📋" },
+                    { id: "paperSubmission", label: "纸质版提交方式", type: "textarea", placeholder: "请输入纸质版提交方式", emoji: "📄" },
+                    { id: "digitalSubmission", label: "电子版提交方式", type: "textarea", placeholder: "请输入电子版提交方式", emoji: "💻" },
+                    { id: "startTime", label: "开始时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "endTime", label: "截止时间", type: "datetime-local", emoji: "🕒" },
+                    { id: "reminder", label: "特别提醒", type: "textarea", placeholder: "请输入特别提醒", emoji: "⚠️" }
+                ],
+                reminder: "⚠️ 特别提醒：超过截止时间将不再接受任何形式的报名和材料提交，请合理安排时间！"
+            },
+            meeting: {
+                title: "会议通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入会议标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "topic", label: "会议主题", type: "text", placeholder: "请输入会议主题", emoji: "💡" },
+                    { id: "time", label: "会议时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "location", label: "会议地点", type: "text", placeholder: "请输入会议地点", emoji: "📍" },
+                    { id: "attendees", label: "参会人员", type: "textarea", placeholder: "请输入参会人员名单", emoji: "👥" },
+                    { id: "agenda", label: "会议议程", type: "textarea", placeholder: "请输入会议议程", emoji: "📝" }
+                ],
+                reminder: "⚠️ 请务必准时参会，如有特殊情况请提前告知！"
+            },
+            activity: {
+                title: "活动报名通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入活动标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "theme", label: "活动主题", type: "text", placeholder: "请输入活动主题", emoji: "🎯" },
+                    { id: "background", label: "活动背景", type: "textarea", placeholder: "请输入活动背景说明", emoji: "📋" },
+                    { id: "requirements", label: "报名条件", type: "textarea", placeholder: "请输入报名条件", emoji: "📝" },
+                    { id: "startTime", label: "开始时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "endTime", label: "结束时间", type: "datetime-local", emoji: "🕒" },
+                    { id: "location", label: "活动地点", type: "text", placeholder: "请输入活动地点", emoji: "📍" },
+                    { id: "registrationMethod", label: "报名方式", type: "textarea", placeholder: "请输入报名方式", emoji: "✍️" }
+                ],
+                reminder: "⚠️ 报名后请保持联系方式畅通，以便接收活动通知！"
+            },
+            competition: {
+                title: "竞赛通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入竞赛标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "theme", label: "竞赛主题", type: "text", placeholder: "请输入竞赛主题", emoji: "🎯" },
+                    { id: "requirements", label: "报名条件", type: "textarea", placeholder: "请输入报名条件", emoji: "📝" },
+                    { id: "registrationMethod", label: "报名方式", type: "textarea", placeholder: "请输入报名方式", emoji: "✍️" },
+                    { id: "schedule", label: "赛事安排", type: "textarea", placeholder: "请输入赛事时间安排", emoji: "📅" },
+                    { id: "awards", label: "奖励设置", type: "textarea", placeholder: "请输入奖项设置", emoji: "🏆" },
+                    { id: "deadline", label: "截止时间", type: "datetime-local", emoji: "🕒" }
+                ],
+                reminder: "⚠️ 请确保提交的报名信息准确无误，逾期报名将不予受理！"
+            },
+            course: {
+                title: "课程安排通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入课程标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "courseName", label: "课程名称", type: "text", placeholder: "请输入课程名称", emoji: "📚" },
+                    { id: "teacher", label: "任课教师", type: "text", placeholder: "请输入任课教师姓名", emoji: "👨‍🏫" },
+                    { id: "startTime", label: "上课时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "location", label: "上课地点", type: "text", placeholder: "请输入上课地点", emoji: "📍" },
+                    { id: "materials", label: "教材要求", type: "textarea", placeholder: "请输入教材及预习要求", emoji: "📖" }
+                ],
+                reminder: "⚠️ 请提前好准备，准时参加课程！"
+            },
+            evaluation: {
+                title: "评选通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入评选标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "scope", label: "评选范围", type: "textarea", placeholder: "请输入评选范围", emoji: "🎯" },
+                    { id: "criteria", label: "评选条件", type: "textarea", placeholder: "请输入评选条件", emoji: "📋" },
+                    { id: "materials", label: "材料清单", type: "textarea", placeholder: "请输入需要提交的材料清单", emoji: "📝" },
+                    { id: "paperSubmission", label: "纸质材料要求", type: "textarea", placeholder: "请输入纸质材料提交要求", emoji: "📄" },
+                    { id: "digitalSubmission", label: "电子材料要求", type: "textarea", placeholder: "请输入电子材料提交要求", emoji: "💻" },
+                    { id: "process", label: "评选流程", type: "textarea", placeholder: "请输入评选流程", emoji: "🔄" },
+                    { id: "schedule", label: "时间安排", type: "textarea", placeholder: "请输入评选时间安排", emoji: "📅" }
+                ],
+                reminder: "⚠️ 请确保材料真实有效，评选结果将不受理任何异议！"
+            },
+            payment: {
+                title: "缴费通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入缴费标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "project", label: "缴费项目", type: "text", placeholder: "请输入缴费项目", emoji: "💰" },
+                    { id: "amount", label: "缴费金额", type: "text", placeholder: "请输入缴费金额", emoji: "💴" },
+                    { id: "method", label: "缴费方式", type: "textarea", placeholder: "请输入缴费方式说明", emoji: "💳" },
+                    { id: "deadline", label: "截止时间", type: "datetime-local", emoji: "🕒" }
+                ],
+                reminder: "⚠️ 逾期未缴费将视为自动放弃，请合理安排时间！"
+            },
+            adjustment: {
+                title: "调整通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入调整标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "originalPlan", label: "原计划安排", type: "textarea", placeholder: "请输入原计划的时间、地点、内容等", emoji: "📋" },
+                    { id: "newPlan", label: "新调整安排", type: "textarea", placeholder: "请输入调整后的时间、地点、内容等", emoji: "📝" },
+                    { id: "reason", label: "调整原因", type: "textarea", placeholder: "请输入调整原因", emoji: "❓" }
+                ],
+                reminder: "⚠️ 请注意新安排的时间和地点变化，避免错过重要信息！"
+            },
+            review: {
+                title: "评审通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入评审标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "scope", label: "审核范围", type: "textarea", placeholder: "请输入审核范围", emoji: "🎯" },
+                    { id: "standards", label: "审核标准", type: "textarea", placeholder: "请输入审核标准", emoji: "📋" },
+                    { id: "materials", label: "材料清单", type: "textarea", placeholder: "请输入需要提交的材料", emoji: "📝" },
+                    { id: "time", label: "审核时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "location", label: "审核地点", type: "text", placeholder: "请输入审核地点", emoji: "📍" }
+                ],
+                reminder: "⚠️ 请确保材料完整，审核结果将以官方通知为准！"
+            },
+            safety: {
+                title: "安全检查通知",
+                fields: [
+                    { id: "title", label: "通知标题", type: "text", placeholder: "请输入检查标题", emoji: "📢" },
+                    { id: "greeting", label: "称呼", type: "text", placeholder: "请输入称呼", emoji: "👋" },
+                    { id: "scope", label: "检查范围", type: "textarea", placeholder: "请输入设备或区域范围", emoji: "🔍" },
+                    { id: "time", label: "检查时间", type: "datetime-local", emoji: "🕐" },
+                    { id: "purpose", label: "检查目的", type: "textarea", placeholder: "请输入安全隐患排查等目的", emoji: "🎯" },
+                    { id: "requirements", label: "配合要求", type: "textarea", placeholder: "请输入需要配合的事项", emoji: "📋" }
+                ],
+                reminder: "⚠️ 检查期间可能会影响正常使用，请配合相关工作！"
+            }
+        };
+
+        // 优化 changeTemplate 函数
+        function changeTemplate() {
+            const templateSelect = document.getElementById('templateSelect');
+            const selectedTemplate = templates[templateSelect.value];
+            const templateFields = document.getElementById('templateFields');
+            
+            if (!selectedTemplate) return;
+
+            // 保存当前输入的值
+            const currentValues = {};
+            document.querySelectorAll('#templateFields input, #templateFields textarea').forEach(input => {
+                currentValues[input.id] = input.value;
+            });
+
+            templateFields.innerHTML = '';
+            
+            selectedTemplate.fields.forEach(field => {
+                const fieldHtml = `
+                    <div class="input-group">
+                        <label for="${field.id}">${field.label}</label>
+                        ${field.type === 'textarea' 
+                            ? `<textarea id="${field.id}" rows="4" placeholder="${field.placeholder}">${currentValues[field.id] || ''}</textarea>`
+                            : `<input type="${field.type}" id="${field.id}" placeholder="${field.placeholder}" value="${currentValues[field.id] || ''}">`
+                        }
+                        <span class="emoji-label">${field.emoji}</span>
+                    </div>
+                `;
+                templateFields.innerHTML += fieldHtml;
+            });
+
+            // 为新生成的输入框添加事件监听
+            const newInputs = templateFields.querySelectorAll('input, textarea');
+            newInputs.forEach(input => {
+                input.addEventListener('input', generateNotification);
+                // 添加自动保存功能
+                input.addEventListener('change', saveToLocalStorage);
+            });
+
+            // 从本地存储恢复数据
+            restoreFromLocalStorage();
+
+            // 生成初始预览
+            generateNotification();
+        }
+
+        // 添加本地存储功能
+        function saveToLocalStorage() {
+            const templateSelect = document.getElementById('templateSelect');
+            const selectedTemplate = templateSelect.value;
+            const formData = {};
+            
+            document.querySelectorAll('#templateFields input, #templateFields textarea').forEach(input => {
+                formData[input.id] = input.value;
+            });
+            
+            localStorage.setItem(`notificationData_${selectedTemplate}`, JSON.stringify(formData));
+            showToast('💾 已自动保存', 'info');
+        }
+
+        function restoreFromLocalStorage() {
+            const templateSelect = document.getElementById('templateSelect');
+            const selectedTemplate = templateSelect.value;
+            const savedData = localStorage.getItem(`notificationData_${selectedTemplate}`);
+            
+            if (savedData) {
+                const formData = JSON.parse(savedData);
+                Object.keys(formData).forEach(id => {
+                    const input = document.getElementById(id);
+                    if (input) {
+                        input.value = formData[id];
+                    }
+                });
+            }
+        }
+
+        // 添加清空表单功能
+        function clearForm() {
+            const templateFields = document.getElementById('templateFields');
+            const inputs = templateFields.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            generateNotification();
+            
+            // 清除本地存储
+            const templateSelect = document.getElementById('templateSelect');
+            localStorage.removeItem(`notificationData_${templateSelect.value}`);
+        }
+
+        function generateNotification() {
+            const templateSelect = document.getElementById('templateSelect');
+            const selectedTemplate = templates[templateSelect.value];
+            
+            if (!selectedTemplate) {
+                return showResult();
             }
 
+            try {
+                let notificationContent = `<h2>🌟 ${selectedTemplate.title} 🌟</h2>`;
+                
+                selectedTemplate.fields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    if (!element) return;
+
+                    const value = element.value || '';
+                    if (field.type === 'datetime-local' && value) {
+                        const date = new Date(value);
+                        if (!isNaN(date.getTime())) {
+                            notificationContent += `<p>${field.emoji} ${field.label}：${date.toLocaleString()}</p>`;
+                        }
+                    } else {
+                        notificationContent += `<p>${field.emoji} ${field.label}：${value}</p>`;
+                    }
+                });
+
+                if (selectedTemplate.reminder) {
+                    notificationContent += `
+                        <div class="deadline-warning">
+                            ${selectedTemplate.reminder}
+                        </div>
+                    `;
+                }
+
+                notificationContent += '<p>🌈 期待您的参与！</p>';
+
+                const result = document.getElementById('result');
+                result.innerHTML = notificationContent;
+                result.style.display = 'block';
+            } catch (error) {
+                console.error('生成通知时发生错误:', error);
+                alert('生成通知时发生错误，请刷新页面重试');
+            }
+        }
+
+        // 添加表单验证功能
+        function validateForm() {
+            const templateSelect = document.getElementById('templateSelect');
+            const selectedTemplate = templates[templateSelect.value];
+            let isValid = true;
+            let firstInvalidField = null;
+
+            selectedTemplate.fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (!element) return;
+
+                // 移除之前的错误提示
+                element.classList.remove('invalid');
+                const errorMsg = element.parentNode.querySelector('.error-message');
+                if (errorMsg) errorMsg.remove();
+
+                // 检查必填字段
+                if (element.value.trim() === '') {
+                    isValid = false;
+                    element.classList.add('invalid');
+                    
+                    // 添加错误提示
+                    const error = document.createElement('div');
+                    error.className = 'error-message';
+                    error.textContent = `请输入${field.label}`;
+                    element.parentNode.appendChild(error);
+
+                    if (!firstInvalidField) {
+                        firstInvalidField = element;
+                    }
+                }
+            });
+
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return isValid;
+        }
+
+        // 修改复制功能，添加表单验证
+        function copyNotification() {
+            if (!validateForm()) {
+                return;
+            }
+
+            generateNotification();
+            const result = document.getElementById('result');
+            
             // 创建临时文本区域
             const tempTextArea = document.createElement('textarea');
             tempTextArea.value = result.innerText;
@@ -327,25 +735,28 @@
             tempTextArea.select();
             
             try {
-                // 执行复制命令
                 document.execCommand('copy');
-                
-                // 显示复制成功提示
-                const successMessage = document.createElement('div');
-                successMessage.className = 'copy-success';
-                successMessage.textContent = '✅ 复制成功！';
-                document.body.appendChild(successMessage);
-                
-                // 1.5秒后移除提示
-                setTimeout(() => {
-                    successMessage.remove();
-                }, 1500);
+                showToast('✅ 复制成功！');
             } catch (err) {
-                alert('复制失败，请手动复制');
+                showToast('❌ 复制失败，请手动复制', 'error');
             }
             
-            // 移除临时文本区域
             document.body.removeChild(tempTextArea);
+        }
+
+        // 添加统一的提示框功能
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // 添加动画效果
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
         }
 
         function showResult() {
@@ -369,12 +780,28 @@
                 <p>💻 电子版材料提交：${digitalSubmission}</p>
                 <p>📋 纸质版材料提交：${paperSubmission}</p>
                 <div class="deadline-warning">
-                    ⚠️ 特别提醒：超过截止时间将不再接受任何形式的报名和材料提交，请合理安排时间！
+                    ⚠️ 特别提醒：超过截止时间不再接受任何形式的报名和材料提交，请合理安排时间！
                 </div>
                 <p>🌈 期待您的参与！</p>
             `;
             result.style.display = 'block';
         }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 添加清空按钮
+            const clearButton = document.createElement('button');
+            clearButton.className = 'copy-btn';
+            clearButton.style.backgroundColor = '#ff4757';
+            clearButton.style.marginTop = '10px';
+            clearButton.innerHTML = '🗑️ 清空表单';
+            clearButton.onclick = clearForm;
+            
+            const copyButton = document.querySelector('.copy-btn');
+            copyButton.parentNode.insertBefore(clearButton, copyButton.nextSibling);
+            
+            changeTemplate(); // 初始化模板
+        });
     </script>
 </body>
 </html> 
