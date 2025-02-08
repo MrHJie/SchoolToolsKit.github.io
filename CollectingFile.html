@@ -14,7 +14,6 @@
             --shadow-color: rgba(0, 0, 0, 0.1);
             --border-radius: 16px;
         }
-
         body {
             font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 1000px;
@@ -24,7 +23,6 @@
             min-height: 100vh;
             color: #2d3436;
         }
-
         h1 {
             text-align: center;
             color: var(--primary-color);
@@ -34,25 +32,9 @@
             letter-spacing: -1px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-
-        @keyframes rainbow {
-            0% { color: #ff6b6b; }
-            25% { color: #4ecdc4; }
-            50% { color: #45b7d1; }
-            75% { color: #96c93d; }
-            100% { color: #ff6b6b; }
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
+        @keyframes rainbow { 0% { color: #ff6b6b; } 25% { color: #4ecdc4; } 50% { color: #45b7d1; } 75% { color: #96c93d; } 100% { color: #ff6b6b; } }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         .achievement {
             position: fixed;
             top: 20px;
@@ -64,12 +46,7 @@
             animation: glow 2s infinite alternate;
             z-index: 1000;
         }
-
-        @keyframes glow {
-            from { box-shadow: 0 0 5px #FFD700; }
-            to { box-shadow: 0 0 20px #FFA500; }
-        }
-
+        @keyframes glow { from { box-shadow: 0 0 5px #FFD700; } to { box-shadow: 0 0 20px #FFA500; } }
         .upload-item {
             position: relative;
             overflow: hidden;
@@ -84,24 +61,20 @@
             transition: all 0.3s ease;
             transform-style: preserve-3d;
         }
-
         .upload-item:hover {
             transform: translateY(-5px) rotateX(5deg);
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             border-color: #ff69b4;
         }
-
         .upload-item.completed {
             border-color: #00ff88;
             background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
             animation: pulse 2s infinite;
         }
-
         .upload-item.completed label::after {
             content: " ✅";
             animation: bounce 1s infinite;
         }
-
         .check-button {
             position: relative;
             overflow: hidden;
@@ -118,7 +91,6 @@
             text-transform: uppercase;
             transition: all 0.3s ease;
         }
-
         .check-button::after {
             content: '';
             position: absolute;
@@ -130,17 +102,14 @@
             transform: rotate(45deg);
             transition: all 0.3s ease;
         }
-
         .check-button:hover::after {
             transform: rotate(45deg) translate(50%, 50%);
         }
-
         .check-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 14px rgba(255, 105, 180, 0.3);
             letter-spacing: 3px;
         }
-
         .error {
             color: red;
             margin-top: 5px;
@@ -159,9 +128,7 @@
             opacity: 1;
             transition: opacity 0.3s ease-in-out;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
         .form-group input {
             width: 100%;
             padding: 8px;
@@ -179,10 +146,7 @@
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
-        .email-info h3 {
-            margin: 0;
-            color: #2e7d32;
-        }
+        .email-info h3 { margin: 0; color: #2e7d32; }
         .confetti {
             position: fixed;
             width: 10px;
@@ -190,12 +154,10 @@
             background-color: #f0f;
             animation: confetti-fall 3s linear infinite;
         }
-
         @keyframes confetti-fall {
             0% { transform: translateY(-100vh) rotate(0deg); }
             100% { transform: translateY(100vh) rotate(360deg); }
         }
-
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -208,7 +170,6 @@
             align-items: center;
             z-index: 9999;
         }
-
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -217,18 +178,12 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         /* 当元素显示时的样式 */
         #userInfoForm:not(.hidden),
         .email-info[style*="display: block"] {
             opacity: 1;
         }
-
         /* 修改导航栏样式 */
         .progress-nav {
             position: fixed;
@@ -242,7 +197,6 @@
             z-index: 100;
             backdrop-filter: blur(10px);
         }
-
         .progress-step {
             display: flex;
             align-items: center;
@@ -250,11 +204,7 @@
             opacity: 0.5;
             transition: all 0.3s ease;
         }
-
-        .progress-step.active {
-            opacity: 1;
-        }
-
+        .progress-step.active { opacity: 1; }
         .step-number {
             width: 30px;
             height: 30px;
@@ -267,22 +217,15 @@
             font-weight: bold;
             transition: all 0.3s ease;
         }
-
         .progress-step.active .step-number {
             background: var(--primary-color);
             color: white;
         }
-
         .progress-step.completed .step-number {
             background: #4CAF50;
             color: white;
         }
-
-        .step-text {
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
+        .step-text { font-size: 14px; white-space: nowrap; }
         /* 修改媒体查询部分 */
         @media (max-width: 768px) {
             .progress-nav {
@@ -298,14 +241,12 @@
                 border-bottom: 1px solid rgba(0,0,0,0.1);
                 background: rgba(255, 255, 255, 0.95);
             }
-
             .progress-step {
                 margin: 0;
                 flex-direction: column;
                 align-items: center;
                 font-size: 12px;
             }
-
             .step-number {
                 width: 24px;
                 height: 24px;
@@ -313,21 +254,11 @@
                 margin-bottom: 4px;
                 font-size: 12px;
             }
-
-            .step-text {
-                font-size: 12px;
-            }
-
+            .step-text { font-size: 12px; }
             /* 调整主体内容，防止被固定导航栏遮挡 */
-            body {
-                padding-top: 80px;
-            }
-
+            body { padding-top: 80px; }
             /* 调整成就提示的位置 */
-            .achievement {
-                top: 80px;
-            }
-
+            .achievement { top: 80px; }
             /* 优化按钮在移动端的显示 */
             .check-button {
                 width: 100%;
@@ -335,30 +266,15 @@
                 margin: 20px auto;
                 display: block;
             }
-
             /* 优化表单在移动端的显示 */
-            .form-group input {
-                font-size: 16px; /* 防止iOS自动放大输入框 */
-            }
-
+            .form-group input { font-size: 16px; }
             /* 优化上传项在移动端的显示 */
-            .upload-item {
-                margin: 10px 0;
-                padding: 12px;
-            }
-
+            .upload-item { margin: 10px 0; padding: 12px; }
             /* 优化标题在移动端的显示 */
-            h1 {
-                font-size: 1.8em;
-                margin-top: 0;
-            }
-
+            h1 { font-size: 1.8em; margin-top: 0; }
             /* 优化加载遮罩在移动端的显示 */
-            .loading-overlay {
-                padding-top: 80px;
-            }
+            .loading-overlay { padding-top: 80px; }
         }
-
         /* 添加连接线效果 */
         @media (min-width: 769px) {
             .progress-step:not(:last-child)::after {
@@ -371,43 +287,20 @@
                 background: #ddd;
                 transform: translateY(-50%);
             }
-
-            .progress-step.completed::after {
-                background: #4CAF50;
-            }
-
-            .progress-step {
-                position: relative;
-                margin: 25px 0;
-            }
+            .progress-step.completed::after { background: #4CAF50; }
+            .progress-step { position: relative; margin: 25px 0; }
         }
-
         /* 添加过渡动画 */
-        .progress-step {
-            transition: all 0.3s ease;
-        }
-
-        .step-number {
-            transition: all 0.3s ease;
-        }
-
+        .progress-step, .step-number { transition: all 0.3s ease; }
         /* 添加完成标记 */
         .progress-step.completed .step-number::after {
             content: '✓';
             position: absolute;
             color: white;
         }
-
         /* 添加激活状态的动画效果 */
-        .progress-step.active .step-number {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
+        .progress-step.active .step-number { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -422,11 +315,13 @@
         <!-- 示例：不同文件可根据需求设置不同后缀 -->
         <div class="upload-item">
             <label>岗位实习审批表</label>
+            <!-- 此处要求后缀为 doc -->
             <input type="file" accept=".doc" data-required="true" data-name="岗位实习审批表">
             <div class="error"></div>
         </div>
         <div class="upload-item">
             <label>三方协议</label>
+            <!-- 此处要求后缀为 pdf -->
             <input type="file" accept=".png" data-required="true" data-name="三方协议">
             <div class="error"></div>
         </div>
@@ -502,16 +397,16 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script>
+        // 文件上传时简单缩放动画效果
         document.querySelectorAll('input[type="file"]').forEach(input => {
             input.addEventListener('change', (e) => {
                 const uploadItem = e.target.closest('.upload-item');
                 uploadItem.style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    uploadItem.style.transform = 'scale(1)';
-                }, 200);
+                setTimeout(() => { uploadItem.style.transform = 'scale(1)'; }, 200);
             });
         });
 
+        // 生成一定数量的彩带效果
         function createConfetti() {
             const colors = ['#ff69b4', '#00ff88', '#ff6b6b', '#4ecdc4', '#45b7d1'];
             for (let i = 0; i < 50; i++) {
@@ -531,21 +426,17 @@
             achievement.style.animation = 'glow 2s infinite alternate';
             achievement.style.right = '20px';
             createConfetti();
-            setTimeout(() => {
-                achievement.style.right = '-300px';
-            }, 3000);
+            setTimeout(() => { achievement.style.right = '-300px'; }, 3000);
         }
 
         function updateProgress() {
             const totalFiles = 7;
             const completedFiles = document.querySelectorAll('.upload-item.completed').length;
-            
             if (completedFiles === totalFiles) {
                 updateProgressNav(2);
             } else {
                 updateProgressNav(1);
             }
-
             if (completedFiles === 1) {
                 showAchievement("🎉 解锁成就：初次上传 - 勇者的冒险开始了！");
             } else if (completedFiles === 3) {
@@ -573,30 +464,25 @@
         function checkFiles() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
             let hasError = false;
-            
             fileInputs.forEach(input => {
                 const errorDiv = input.nextElementSibling;
                 errorDiv.textContent = '';
                 const uploadItem = input.closest('.upload-item');
-                
                 if (!input.files || input.files.length === 0) {
                     errorDiv.textContent = `请上传${input.dataset.name}`;
                     hasError = true;
                     uploadItem.classList.remove('completed');
                     return;
                 }
-                
                 const file = input.files[0];
                 // 根据 accept 属性动态确定期望的后缀（去除前面的点）
                 const ext = input.getAttribute('accept').replace('.', '');
                 const expectedFileName = `${input.dataset.name}.${ext}`;
-                
                 if (file.name !== expectedFileName) {
                     errorDiv.textContent = `文件名必须为：${expectedFileName}`;
                     hasError = true;
                     return;
                 }
-                
                 if (!file.name.toLowerCase().endsWith(`.${ext}`)) {
                     errorDiv.textContent = `${input.dataset.name}必须是${ext.toUpperCase()}格式`;
                     hasError = true;
@@ -604,9 +490,7 @@
                 }
                 uploadItem.classList.add('completed');
             });
-
             updateProgress();
-
             if (!hasError) {
                 document.getElementById('userInfoForm').classList.remove('hidden');
                 showAchievement("🌈 完美准备 - 可以提交个人信息了！");
@@ -620,40 +504,46 @@
             }
         }
 
+        // 生成随机防伪码，10位大写字母和数字组合
+        function generateAntiCounterfeitCode() {
+            return Math.random().toString(36).substr(2, 10).toUpperCase();
+        }
+
         async function submitForm() {
             const userName = document.getElementById('userName').value.trim();
             const studentId = document.getElementById('studentId').value.trim();
-            
             if (!userName || !studentId) {
                 alert('请填写姓名和学号！');
                 return;
             }
-
             updateProgressNav(3);
-
             document.getElementById('loadingOverlay').style.display = 'flex';
-
             const zip = new JSZip();
             const fileInputs = document.querySelectorAll('input[type="file"]');
-            
             try {
+                // 将所有上传的文件加入zip
                 for (const input of fileInputs) {
                     const file = input.files[0];
                     if (file) {
-                        // 同样根据 accept 属性设置正确的后缀
                         const ext = input.getAttribute('accept').replace('.', '');
                         zip.file(`${input.dataset.name}.${ext}`, file);
                     }
                 }
-
+                // 生成防伪码信息文本
+                const antiCounterfeitInfo = 
+                    `姓名：${userName}
+                    学号：${studentId}
+                    防伪码：${generateAntiCounterfeitCode()}
+                    提交时间：${new Date().toLocaleString()}`;
+                // 将防伪码文本加入zip
+                zip.file("防伪码.txt", antiCounterfeitInfo);
+                
                 const content = await zip.generateAsync({type: "blob"});
                 const zipFileName = `${userName}_${studentId}_材料.zip`;
-                
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(content);
                 link.download = zipFileName;
                 link.click();
-                
                 document.getElementById('emailInfo').style.display = 'block';
                 showAchievement("🎉 任务完成 - 文件已处理");
                 document.getElementById('emailInfo').scrollIntoView({ 
@@ -661,7 +551,6 @@
                     block: 'center'
                 });
                 updateProgressNav(4);
-                
             } catch (error) {
                 console.error(error);
                 updateProgressNav(3);
