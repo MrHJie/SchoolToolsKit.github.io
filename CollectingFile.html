@@ -419,14 +419,17 @@
     </div>
 
     <div class="upload-container">
+        <!-- 示例：不同文件可根据需求设置不同后缀 -->
         <div class="upload-item">
             <label>岗位实习审批表</label>
+            <!-- 此处要求后缀为 doc -->
             <input type="file" accept=".doc" data-required="true" data-name="岗位实习审批表">
             <div class="error"></div>
         </div>
         <div class="upload-item">
             <label>三方协议</label>
-            <input type="file" accept=".pdf" data-required="true" data-name="三方协议">
+            <!-- 此处要求后缀为 pdf -->
+            <input type="file" accept=".png" data-required="true" data-name="三方协议">
             <div class="error"></div>
         </div>
         <div class="upload-item">
@@ -472,7 +475,8 @@
     </div>
 
     <div id="emailInfo" class="email-info">
-        <h3>请将下载的压缩包提交至：</h3><a href="https://send2me.cn/-TuyVDW6/SJuT-Q-OrAqhbw">点击提交刚才下载的压缩包</a>
+        <h3>请将下载的压缩包提交至：</h3>
+        <a href="https://send2me.cn/-TuyVDW6/SJuT-Q-OrAqhbw">点击提交刚才下载的压缩包</a>
     </div>
 
     <div id="loadingOverlay" class="loading-overlay">
@@ -585,15 +589,18 @@
                 }
                 
                 const file = input.files[0];
-                const expectedFileName = `${input.dataset.name}.pdf`;
+                // 根据 accept 属性动态确定期望的后缀（去除前面的点）
+                const ext = input.getAttribute('accept').replace('.', '');
+                const expectedFileName = `${input.dataset.name}.${ext}`;
+                
                 if (file.name !== expectedFileName) {
                     errorDiv.textContent = `文件名必须为：${expectedFileName}`;
                     hasError = true;
                     return;
                 }
                 
-                if (!file.name.toLowerCase().endsWith('.pdf')) {
-                    errorDiv.textContent = `${input.dataset.name}必须是PDF格式`;
+                if (!file.name.toLowerCase().endsWith(`.${ext}`)) {
+                    errorDiv.textContent = `${input.dataset.name}必须是${ext.toUpperCase()}格式`;
                     hasError = true;
                     return;
                 }
@@ -635,7 +642,9 @@
                 for (const input of fileInputs) {
                     const file = input.files[0];
                     if (file) {
-                        zip.file(`${input.dataset.name}.pdf`, file);
+                        // 同样根据 accept 属性设置正确的后缀
+                        const ext = input.getAttribute('accept').replace('.', '');
+                        zip.file(`${input.dataset.name}.${ext}`, file);
                     }
                 }
 
@@ -668,4 +677,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
